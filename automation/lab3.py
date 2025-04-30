@@ -32,12 +32,35 @@ logging.basicConfig(filename=str(LOG_F), level=logging.INFO,
                     format="%(asctime)s  %(levelname)s  %(message)s",
                     encoding="utf-8")
 
-# ─── helpers -------------------------------------------------------------
-def _is_map(x):          # фильтруем строковые «комментарии» в yaml
-    return hasattr(x, "keys")
+# ─── helpers ────────────────────────────────────────────
+import re, math
+HOURS_IN_MONTH = 168                # 21 рабочих дня × 8 ч
 
-def _rate(v):            # Project принимает строковые ставки
-    return "0" if v in (None, "") else str(v)
+def _rate(raw) -> str:
+    """конвертирует строку-ставку в формат, который MS Project
+       принимает в поле StandardRate / OvertimeRate.
+
+       • '90000р/мес' → '535.71'
+       • '500р/ч'     → '500'
+       • '15000р'     → '15000'
+       • None/0/''    → '0'
+    """
+    if not raw:
+        return "0"
+    if isinstance(raw, (int, float)):
+        return f"{raw:.2f}"
+
+    s = str(raw).lower().replace(" ", "")
+    m = re.match(r"([\d\.]+)(?:р|руб)?/(мес|час|ч)?", s)
+    if not m:                       # нет «/ед.» – просто вернуть цифру
+        return re.sub(r"[^\d\.]", "", s) or "0"
+
+    val = float(m.group(1))
+    unit = m.group(2)
+    if unit in ("мес",):
+        val /= HOURS_IN_MONTH       # перевод «за месяц» → «за час»
+    return f"{val:.2f}"
+
 
 def res_by_name(app, name):
     return next((r for r in app.ActiveProject.Resources
@@ -47,41 +70,50 @@ def task_by_id(app, tid):
     return next((t for t in app.ActiveProject.Tasks
                  if t and t.ID == tid), None)
 
+def add_asn(task, res):
+    """добавляет назначение, если его ещё нет; возвращает Assignment | None"""
+    for a in task.Assignments:
+        if a and a.ResourceID == res.ID:
+            return a                # уже назначено
+    try:
+        return task.Application.ActiveProject.Assignments.Add(task.ID, res.ID)
+    except Exception as e:
+        logging.info("Skip assign %s→%s : %s", task.ID, res.Name, e)
+        return None
+
 # ─── шаг-1: ресурсы -------------------------------------------------------
 @safe_step("Лаба3_01_Resources.mpp")
 def step1(app):
     try_call(app.ViewApply, "Resource Sheet", "Лист ресурсов")
     for rc in cfg["resources"]:
-        if not _is_map(rc):
-            continue
         if res_by_name(app, rc["name"]):
             continue
-        res = app.ActiveProject.Resources.Add(rc["name"])
-        tp  = rc["type"].upper()
-        if tp == "M":
+        res = app.Resources.Add(rc["name"])
+        typ = rc["type"].upper()
+
+        if typ == "M":                                   # материал
             res.Type          = 1
             res.MaterialLabel = rc.get("units", "")
             res.StandardRate  = _rate(rc.get("std_rate"))
-        elif tp == "Z":
+        elif typ == "Z":                                 # затраты
             res.Type = 2
-        else:
+        else:                                            # трудовой
             res.Type = 0
+
 
 # ─── шаг-2: ставки / инициалы --------------------------------------------
 @safe_step("Лаба3_02_ResProps.mpp")
 def step2(app):
     for rc in cfg["resources"]:
-        if not (_is_map(rc) and "rates" in rc):
-            continue
         res = res_by_name(app, rc["name"])
-        if not res or res.Type != 0:
+        if not res or res.Type != 0 or "rates" not in rc:
             continue
-        res.Initials = rc.get("short", "")
         for tab, row in rc["rates"].items():
             pr = res.CostRateTables(tab).PayRates(1)
             pr.StandardRate = _rate(row.get("std"))
             pr.OvertimeRate = _rate(row.get("ot"))
             pr.CostPerUse   = _rate(row.get("per_use"))
+
 
 # ─── шаг-3: назначения ----------------------------------------------------
 @safe_step("Лаба3_03_Assign.mpp")
@@ -103,19 +135,21 @@ def step3(app):
         if not task or not res:
             logging.info("Skip assign %s→%s", a["task_id"], a["resource"])
             continue
-        asn = add_asn(task, res)
 
-        if res.Type == 0:                       # трудовой
-            asn.Units = a.get("units", 100)/100
+        asn = add_asn(task, res)
+        if asn is None:            # дубликат или ошибка – уже залогировали
+            continue
+
+        if res.Type == 0:          # трудовой
+            asn.Units = a.get("units", 100) / 100
             if "cost_table" in a:
                 asn.CostRateTable = a["cost_table"]
-
-        elif res.Type == 1:                     # материал
+        elif res.Type == 1:        # материал
             asn.Units       = a.get("quantity", 1)
-            asn.UnitsFormat = 19                # «шт/д»
-
-        elif res.Type == 2:                     # затратный
+            asn.UnitsFormat = 19   # единиц/день
+        elif res.Type == 2:        # затраты
             asn.Cost = a.get("cost", 0)
+
 
 # ─── main -----------------------------------------------------------------
 def run():

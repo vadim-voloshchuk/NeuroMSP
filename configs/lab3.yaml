@@ -83,20 +83,20 @@ resources:
     rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
 
   # ─────────────── М А Т Е Р И А Л Ы ────────────────────────────────────────
-  - {name: "Компьютер",           type: "M", units: "шт",      std_rate: "15000р"}
-  - {name: "Сервер",              type: "M", units: "шт",      std_rate: "50000р"}
-  - {name: "Принтер",             type: "M", units: "шт",      std_rate: "5000р"}
-  - {name: "МФУ",                 type: "M", units: "шт",      std_rate: "7000р"}
-  - {name: "Сетевой кабель",      type: "M", units: "м",       std_rate: "0"}
-  - {name: "Сетевой концентратор",type: "M", units: "шт",      std_rate: "3000р"}
-  - {name: "Панель",              type: "M", units: "шт",      std_rate: "10000р"}
-  - {name: "Разъёмы и розетки",   type: "M", units: "компл.",  std_rate: "0"}
-  - {name: "Бухгалтерская система", type: "M", units: "компл.", std_rate: "0"}
-  - {name: "Офисный пакет",       type: "M", units: "компл.",  std_rate: "0"}
-  - {name: "ОС рабочей станции",  type: "M", units: "лиц.",    std_rate: "0"}
-  - {name: "Серверная ОС",        type: "M", units: "лиц.",    std_rate: "0"}
-  - {name: "DVD-матрица",         type: "M", units: "шт",      std_rate: "10р"}
-
+  - {name: "Компьютер",            type: "M", units: "шт",     std_rate: 15000}
+  - {name: "Сервер",               type: "M", units: "шт",     std_rate: 50000}
+  - {name: "Принтер",              type: "M", units: "шт",     std_rate: 5000}
+  - {name: "МФУ",                  type: "M", units: "шт",     std_rate: 7000}
+  - {name: "Сетевой кабель",       type: "M", units: "м",      std_rate: 0}
+  - {name: "Сетевой концентратор", type: "M", units: "шт",     std_rate: 3000}
+  - {name: "Панель",               type: "M", units: "шт",     std_rate: 10000}
+  - {name: "Разъёмы и розетки",    type: "M", units: "компл.", std_rate: 0}
+  - {name: "Бухгалтерская система",type: "M", units: "компл.", std_rate: 0}
+  - {name: "Офисный пакет",        type: "M", units: "компл.", std_rate: 0}
+  - {name: "ОС рабочей станции",   type: "M", units: "лиц.",   std_rate: 0}
+  - {name: "Серверная ОС",         type: "M", units: "лиц.",   std_rate: 0}
+  - {name: "DVD-матрица",          type: "M", units: "шт",     std_rate: 10}
+  
   # ─────────────── З А Т Р А Т Н Ы Е ────────────────────────────────────────
   - {name: "Интернет",               type: "Z"}
   - {name: "Междугородние переговоры", type: "Z"}
