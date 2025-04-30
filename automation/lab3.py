@@ -34,72 +34,66 @@ logging.basicConfig(filename=str(LOG_F), level=logging.INFO,
 
 # ── helpers ────────────────────────────────────────────────────────────────
 import re
-HOURS_IN_MONTH = 21*8          # 168 ч
+HOURS_IN_MONTH = 21 * 8          # 168 ч
 
-def _rate(raw) -> str:
+def _rate(raw) -> float:
     """
-    Приводит «человечью» запись ставки к тому,
-    что Project безоговорочно примет.
+    Приводит '90000р/мес', '500р/ч', 15000 → число-ставку «р/ч».
 
-    • '90000р/мес' → '535.71р/ч'
-    • '500р/ч'     → '500р/ч'
-    • 15000        → '15000р'
-    • None,''      → '0'
+    MS Project COM API ЛУЧШЕ переваривает *число* (Single),
+    а не строку «500р/ч».  Поэтому возвращаем float.
     """
     if not raw:
-        return "0"
-
-    # число без всяких суффиксов
+        return 0.0
     if isinstance(raw, (int, float)):
-        return f"{float(raw):.2f}р"
+        return float(raw)
 
-    s = (
-        str(raw)
-        .lower()
-        .replace(" ", "")
-        .replace(",", ".")          # на всякий
-    )
+    s = (str(raw).lower()
+                  .replace(" ", "")
+                  .replace(",", "."))
     m = re.match(r"([\d\.]+)(?:р|руб)?(?:/(мес|ч|час))?$", s)
     if not m:
-        # не смогли распарсить — отдадим Project «как есть»
-        return raw
+        # неизвестный формат – попытаемся отдать число
+        return float(re.sub(r"[^\d\.]", "", s) or 0)
 
     val = float(m.group(1))
-    unit = m.group(2) or ""         # '' | 'мес' | 'ч'
-
+    unit = m.group(2) or ""
     if unit.startswith("мес"):
-        val = val / HOURS_IN_MONTH   # → «за час»
-
-    # трудовой ресурс → всегда «…р/ч», остальное без «/ч»
-    if unit:                        # была единица времени
-        return f"{val:.2f}р/ч"
-    return f"{val:.2f}р"
+        val = val / HOURS_IN_MONTH      # → «за час»
+    return val
 
 def res_by_name(app, name):
     return next((r for r in app.ActiveProject.Resources
                  if r and r.Name == name), None)
 
 def task_by_id(app, tid):
-    return next((t for t in app.ActiveProject.Tasks
-                 if t and t.ID == tid), None)
+    """
+    Возвращает задачу по ID *или* UniqueID (что найдётся первым).
+    """
+    for t in app.ActiveProject.Tasks:
+        if not t:
+            continue
+        if t.ID == tid or t.UniqueID == tid:
+            return t
+    return None
 
 def add_asn(task, res):
     """
-    Создаёт назначение, если его ещё нет.
-    Если дублируется либо Project временно «занят» — записывает в лог
-    и возвращает None (скрипт продолжит работу, а не упадёт).
+    Создаёт назначение, если такого ещё нет.
+    Логгер вместо Exception – скрипт живёт дальше.
     """
-    # уже назначен?
     for a in task.Assignments:
         if a and a.ResourceID == res.ID:
-            return a
+            return None          # уже есть
 
-    try:
-        pj = task.Application.ActiveProject
-        return pj.Assignments.Add(task.ID, res.ID)
-    except Exception as e:
-        logging.info("Skip assign %s→%s – %s", task.ID, res.Name, e)
-        return None
+    pj = task.Application.ActiveProject
+    for _ in range(3):           # пару попыток – если Project «думает»
+        try:
+            return pj.Assignments.Add(task.UniqueID, res.UniqueID)
+        except Exception as e:
+            time.sleep(0.7)
+    logging.info("Skip assign %s→%s – %s", task.ID, res.Name, e)
+    return None
 
 # ─── шаг-1: ресурсы -------------------------------------------------------
 @safe_step("Лаба3_01_Resources.mpp")
@@ -135,7 +129,6 @@ def step2(app):
             pr.CostPerUse   = _rate(row.get("per_use"))
 
 
-# ─── шаг-3: назначения ----------------------------------------------------
 # ─── шаг-3: назначения ----------------------------------------------------
 @safe_step("Лаба3_03_Assign.mpp")
 def step3(app):
