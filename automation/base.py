@@ -6,34 +6,32 @@ automation/base.py • Декоратор safe_step для безопасног�
 import logging, time
 from .utils import focus, shot, save_as
 
-def safe_step(save_fname=None):
+def safe_step(save_name: str | None = None):
     """
-    Декоратор:
-      • выполняет шаг fn
-      • пытается сохранить (если save_fname)
-      • в любом случае делает скрин и выводит статус
+    • если save_name передан – всегда пытаемся сохранить
+      (OK / SKIP / FAIL), чтобы файл-пустышка появился;
+    • если исключение внутри шага – логируем, но не валимся.
     """
-    def decorator(fn):
-        def wrapper(app, idx, code, *args, **kwargs):
+    def deco(fn):
+        def wrapper(app, idx, code, *a, **kw):
             status = "OK"
             try:
-                fn(app, *args, **kwargs)
-                if save_fname:
-                    try:
-                        save_as(app, save_fname)
-                    except Exception:
-                        logging.exception("FAIL save_as %s", code)
-                        status = "FAIL"
-            except AttributeError as ae:
+                fn(app, *a, **kw)
+            except AttributeError as e:  # помечаем шаг «SKIP»
                 status = "SKIP"
-                logging.info("SKIP %s: %s", code, ae)
+                logging.info("SKIP %s: %s", code, e)
             except Exception:
                 status = "FAIL"
                 logging.exception("FAIL %s", code)
-            # даже при ошибках — делаем скрин
-            focus(app.Caption)
-            shot(idx, code)
-            print(f"[{idx:02d}] {code:22} {status}")
-            time.sleep(0.5)
+
+            # сохранить MPP-файл, даже если SKIP/FAIL
+            if save_name:
+                try:
+                    save_as(app, f"{save_name}")
+                except Exception:
+                    logging.exception("save_as %s", save_name)
+
+            focus(app.Caption);  shot(idx, code)
+            print(f"[{idx:02d}] {code:24} {status}")
         return wrapper
-    return decorator
+    return deco
