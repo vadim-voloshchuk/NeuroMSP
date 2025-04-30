@@ -36,11 +36,12 @@ logging.basicConfig(filename=str(LOG), level=logging.INFO,
 
 # ─── helpers ────────────────────────────────────────────
 def get_res(app, name):
-    return next((r for r in app.Resources if r and r.Name == name), None)
+    rescoll = app.ActiveProject.Resources
+    return next((r for r in rescoll if r and r.Name == name), None)
 
-def get_task(app, task_id: int):
-    return next((t for t in app.ActiveProject.Tasks
-                 if t and t.ID == task_id), None)
+def get_task(app, task_id):
+    tcoll = app.ActiveProject.Tasks
+    return next((t for t in tcoll if t and t.ID == task_id), None)
 
 # ─── шаг 1. ресурсы ─────────────────────────────────────
 @safe_step("Лаба3_01_Resources.mpp")
