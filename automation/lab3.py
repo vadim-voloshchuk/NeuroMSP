@@ -32,35 +32,48 @@ logging.basicConfig(filename=str(LOG_F), level=logging.INFO,
                     format="%(asctime)s  %(levelname)s  %(message)s",
                     encoding="utf-8")
 
-# ─── helpers ────────────────────────────────────────────
-import re, math
-HOURS_IN_MONTH = 168                # 21 рабочих дня × 8 ч
+# ── helpers ────────────────────────────────────────────────────────────────
+import re
+HOURS_IN_MONTH = 21*8          # 168 ч
 
 def _rate(raw) -> str:
-    """конвертирует строку-ставку в формат, который MS Project
-       принимает в поле StandardRate / OvertimeRate.
+    """
+    Приводит «человечью» запись ставки к тому,
+    что Project безоговорочно примет.
 
-       • '90000р/мес' → '535.71'
-       • '500р/ч'     → '500'
-       • '15000р'     → '15000'
-       • None/0/''    → '0'
+    • '90000р/мес' → '535.71р/ч'
+    • '500р/ч'     → '500р/ч'
+    • 15000        → '15000р'
+    • None,''      → '0'
     """
     if not raw:
         return "0"
-    if isinstance(raw, (int, float)):
-        return f"{raw:.2f}"
 
-    s = str(raw).lower().replace(" ", "")
-    m = re.match(r"([\d\.]+)(?:р|руб)?/(мес|час|ч)?", s)
-    if not m:                       # нет «/ед.» – просто вернуть цифру
-        return re.sub(r"[^\d\.]", "", s) or "0"
+    # число без всяких суффиксов
+    if isinstance(raw, (int, float)):
+        return f"{float(raw):.2f}р"
+
+    s = (
+        str(raw)
+        .lower()
+        .replace(" ", "")
+        .replace(",", ".")          # на всякий
+    )
+    m = re.match(r"([\d\.]+)(?:р|руб)?(?:/(мес|ч|час))?$", s)
+    if not m:
+        # не смогли распарсить — отдадим Project «как есть»
+        return raw
 
     val = float(m.group(1))
-    unit = m.group(2)
-    if unit in ("мес",):
-        val /= HOURS_IN_MONTH       # перевод «за месяц» → «за час»
-    return f"{val:.2f}"
+    unit = m.group(2) or ""         # '' | 'мес' | 'ч'
 
+    if unit.startswith("мес"):
+        val = val / HOURS_IN_MONTH   # → «за час»
+
+    # трудовой ресурс → всегда «…р/ч», остальное без «/ч»
+    if unit:                        # была единица времени
+        return f"{val:.2f}р/ч"
+    return f"{val:.2f}р"
 
 def res_by_name(app, name):
     return next((r for r in app.ActiveProject.Resources
@@ -71,34 +84,52 @@ def task_by_id(app, tid):
                  if t and t.ID == tid), None)
 
 def add_asn(task, res):
-    """добавляет назначение, если его ещё нет; возвращает Assignment | None"""
+    """
+    Создаёт назначение, если его ещё нет.
+    Если дублируется либо Project временно «занят» — записывает в лог
+    и возвращает None (скрипт продолжит работу, а не упадёт).
+    """
+    # уже назначен?
     for a in task.Assignments:
         if a and a.ResourceID == res.ID:
-            return a                # уже назначено
+            return a
+
     try:
-        return task.Application.ActiveProject.Assignments.Add(task.ID, res.ID)
+        pj = task.Application.ActiveProject
+        return pj.Assignments.Add(task.ID, res.ID)
     except Exception as e:
-        logging.info("Skip assign %s→%s : %s", task.ID, res.Name, e)
+        logging.info("Skip assign %s→%s – %s", task.ID, res.Name, e)
         return None
 
 # ─── шаг-1: ресурсы -------------------------------------------------------
-@safe_step("Лаба3_01_Resources.mpp")
-def step1(app):
-    try_call(app.ViewApply, "Resource Sheet", "Лист ресурсов")
-    for rc in cfg["resources"]:
-        if res_by_name(app, rc["name"]):
-            continue
-        res = app.Resources.Add(rc["name"])
-        typ = rc["type"].upper()
+# ─── шаг-3: назначения ----------------------------------------------------
+@safe_step("Лаба3_03_Assign.mpp")
+def step3(app):
+    try_call(app.ViewApply, "Gantt Chart", "Диаграмма Ганта")
 
-        if typ == "M":                                   # материал
-            res.Type          = 1
-            res.MaterialLabel = rc.get("units", "")
-            res.StandardRate  = _rate(rc.get("std_rate"))
-        elif typ == "Z":                                 # затраты
-            res.Type = 2
-        else:                                            # трудовой
-            res.Type = 0
+    for a in cfg["assignments"]:
+        task = task_by_id(app, a["task_id"])
+        res  = res_by_name(app, a["resource"])
+        if not task or not res:
+            logging.info("Skip assign %s→%s (no task/res)",
+                         a["task_id"], a["resource"])
+            continue
+
+        asn = add_asn(task, res)
+        if asn is None:
+            continue                       # уже есть либо не удалось
+
+        if res.Type == 0:                  # трудовой
+            asn.Units = a.get("units", 100)/100
+            if "cost_table" in a:
+                asn.CostRateTable = a["cost_table"]
+
+        elif res.Type == 1:                # материал
+            asn.Units       = a.get("quantity", 1)
+            asn.UnitsFormat = 19           # «шт./д»
+
+        elif res.Type == 2:                # затраты
+            asn.Cost = a.get("cost", 0)
 
 
 # ─── шаг-2: ставки / инициалы --------------------------------------------
