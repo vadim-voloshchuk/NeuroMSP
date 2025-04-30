@@ -1,28 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Скрипт для теста открытия указанного представления
-Usage: python debug_open_view.py project_file.mpp "Gantt Chart"
+Скрипт для вывода всех доступных представлений в файле .mpp
+Usage: python debug_list_views.py project_file.mpp
 """
 import sys
 from win32com.client import Dispatch
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: python debug_open_view.py project_file.mpp \"View Name\"")
+    if len(sys.argv) < 2:
+        print("Usage: python debug_list_views.py project_file.mpp")
         sys.exit(1)
-    proj_path, view_name = sys.argv[1], sys.argv[2]
+    proj_path = sys.argv[1]
 
     app = Dispatch("MSProject.Application")
     app.Visible = True
     app.FileOpen(proj_path)
 
-    try:
-        print(f"Switching to view '{view_name}'...")
-        app.ViewApply(view_name)
-        print("OK")
-    except Exception as e:
-        print("FAIL:", e)
+    print("=== All Views ===")
+    for v in app.Views:
+        print(f"- {v.Name}")
 
     app.FileClose()
     app.Quit()
