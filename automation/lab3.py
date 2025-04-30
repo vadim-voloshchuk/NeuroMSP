@@ -102,6 +102,40 @@ def add_asn(task, res):
         return None
 
 # ─── шаг-1: ресурсы -------------------------------------------------------
+@safe_step("Лаба3_01_Resources.mpp")
+def step1(app):
+    try_call(app.ViewApply, "Resource Sheet", "Лист ресурсов")
+    for rc in cfg["resources"]:
+        if res_by_name(app, rc["name"]):
+            continue
+        res = app.Resources.Add(rc["name"])
+        typ = rc["type"].upper()
+
+        if typ == "M":                                   # материал
+            res.Type          = 1
+            res.MaterialLabel = rc.get("units", "")
+            res.StandardRate  = _rate(rc.get("std_rate"))
+        elif typ == "Z":                                 # затраты
+            res.Type = 2
+        else:                                            # трудовой
+            res.Type = 0
+
+
+# ─── шаг-2: ставки / инициалы --------------------------------------------
+@safe_step("Лаба3_02_ResProps.mpp")
+def step2(app):
+    for rc in cfg["resources"]:
+        res = res_by_name(app, rc["name"])
+        if not res or res.Type != 0 or "rates" not in rc:
+            continue
+        for tab, row in rc["rates"].items():
+            pr = res.CostRateTables(tab).PayRates(1)
+            pr.StandardRate = _rate(row.get("std"))
+            pr.OvertimeRate = _rate(row.get("ot"))
+            pr.CostPerUse   = _rate(row.get("per_use"))
+
+
+# ─── шаг-3: назначения ----------------------------------------------------
 # ─── шаг-3: назначения ----------------------------------------------------
 @safe_step("Лаба3_03_Assign.mpp")
 def step3(app):
@@ -129,56 +163,6 @@ def step3(app):
             asn.UnitsFormat = 19           # «шт./д»
 
         elif res.Type == 2:                # затраты
-            asn.Cost = a.get("cost", 0)
-
-
-# ─── шаг-2: ставки / инициалы --------------------------------------------
-@safe_step("Лаба3_02_ResProps.mpp")
-def step2(app):
-    for rc in cfg["resources"]:
-        res = res_by_name(app, rc["name"])
-        if not res or res.Type != 0 or "rates" not in rc:
-            continue
-        for tab, row in rc["rates"].items():
-            pr = res.CostRateTables(tab).PayRates(1)
-            pr.StandardRate = _rate(row.get("std"))
-            pr.OvertimeRate = _rate(row.get("ot"))
-            pr.CostPerUse   = _rate(row.get("per_use"))
-
-
-# ─── шаг-3: назначения ----------------------------------------------------
-@safe_step("Лаба3_03_Assign.mpp")
-def step3(app):
-    try_call(app.ViewApply, "Gantt Chart", "Диаграмма Ганта")
-    pj = app.ActiveProject
-
-    def add_asn(task, res):
-        for _ in range(3):           # UI может быть занято
-            try:
-                return pj.Assignments.Add(task.ID, res.ID)
-            except Exception:
-                time.sleep(0.8)
-        raise RuntimeError("cannot add assignment")
-
-    for a in cfg["assignments"]:
-        task = task_by_id(app, a["task_id"])
-        res  = res_by_name(app, a["resource"])
-        if not task or not res:
-            logging.info("Skip assign %s→%s", a["task_id"], a["resource"])
-            continue
-
-        asn = add_asn(task, res)
-        if asn is None:            # дубликат или ошибка – уже залогировали
-            continue
-
-        if res.Type == 0:          # трудовой
-            asn.Units = a.get("units", 100) / 100
-            if "cost_table" in a:
-                asn.CostRateTable = a["cost_table"]
-        elif res.Type == 1:        # материал
-            asn.Units       = a.get("quantity", 1)
-            asn.UnitsFormat = 19   # единиц/день
-        elif res.Type == 2:        # затраты
             asn.Cost = a.get("cost", 0)
 
 
