@@ -1,0 +1,900 @@
+variant1:
+  project_file: "C:\\Projects\\ВнедрениеБухУч\\ВнедрениеБухУч.mpp"
+  project_start: "01.07.2011"
+  view_names:
+    - "Панель представлений"
+    - "ViewBar"
+  base_calendar_index: 1
+  exceptions:
+    - name: "День согласия и примирения"
+      start: "04.11.2009"
+    - name: "Новогодние праздники"
+      start: "31.12.2009"
+      finish: "10.01.2010"
+  tasks:
+    - name: "Начало проекта"
+      duration: 0
+      predecessors: []
+    - name: "Выбор системы"
+      duration: 0
+      predecessors: []
+    - name: "Изучение рынка бухгалтерских систем"
+      duration: 7
+      predecessors: [1]
+    - name: "Составление требований к бухгалтерским системам"
+      duration: 7
+      predecessors: [1]
+    - name: "Консультации с фирмами-разработчиками"
+      duration: 7
+      predecessors: [3, 4]
+    - name: "Принятие окончательного решения"
+      duration: 2
+      predecessors: [5]
+    - name: "Выбор завершён"
+      duration: 0
+      predecessors: [6]
+    - name: "Приобретение программного обеспечения"
+      duration: 0
+      predecessors: []
+    - name: "Заключение договоров"
+      duration: 6
+      predecessors: [7]
+    - name: "Оплата за ПО"
+      duration: 2
+      predecessors: [9]
+    - name: "Оформление ПО на баланс"
+      duration: 3
+      predecessors: ["10FS+5d"]
+    - name: "Приобретение ПО завершено"
+      duration: 0
+      predecessors: [11]
+    - name: "Составление проекта сети"
+      duration: 0
+      predecessors: []
+    - name: "Разработка архитектуры сети"
+      duration: 7
+      predecessors: [7]
+    - name: "Проработка физического размещения сети"
+      duration: 5
+      predecessors: [14]
+    - name: "Проект сети завершён"
+      duration: 0
+      predecessors: [15]
+    - name: "Приобретение компьютеров и сетевого оборудования"
+      duration: 0
+      predecessors: []
+    - name: "Сбор информации о поставщиках и предложениях"
+      duration: 7
+      predecessors: [7]
+    - name: "Анализ и выбор поставщика"
+      duration: 5
+      predecessors: [14, 18]
+    - name: "Заключение договоров"
+      duration: 5
+      predecessors: [19]
+    - name: "Оплата за оборудование"
+      duration: 2
+      predecessors: [20]
+    - name: "Оформление оборудования на баланс"
+      duration: 3
+      predecessors: ["21FS+7d"]
+    - name: "Приобретение оборудования завершено"
+      duration: 0
+      predecessors: [22]
+    - name: "Обучение администратора и программиста"
+      duration: 0
+      predecessors: []
+    - name: "Курсы администраторов"
+      duration: 18
+      predecessors: [16]
+    - name: "Курсы программистов"
+      duration: 18
+      predecessors: [12]
+    - name: "Сдача сертификационных экзаменов"
+      duration: 3
+      predecessors: [25, 26]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [27]
+    - name: "Монтаж локальной сети"
+      duration: 0
+      predecessors: []
+    - name: "Установка компьютеров на рабочих местах"
+      duration: 3
+      predecessors: [23, 28]
+    - name: "Монтаж кабеля"
+      duration: 10
+      predecessors: [23, 28]
+    - name: "Монтаж сетевых устройств"
+      duration: 10
+      predecessors: [23, 28]
+    - name: "Подключение кабеля к компьютерам и сетевым устройствам"
+      duration: 5
+      predecessors: [30, 31, 32]
+    - name: "Монтаж завершён"
+      duration: 0
+      predecessors: [33]
+    - name: "Установка ПО на компьютеры"
+      duration: 0
+      predecessors: []
+    - name: "Установка сервера"
+      duration: 5
+      predecessors: [34]
+    - name: "Создание доменов и пользователей"
+      duration: 7
+      predecessors: [36]
+    - name: "Проверка и настройка работы сети"
+      duration: 5
+      predecessors: [37]
+    - name: "Настройка сети завершена"
+      duration: 0
+      predecessors: [38]
+    - name: "Ввод начальных данных"
+      duration: 0
+      predecessors: []
+    - name: "Ввод справочников"
+      duration: 40
+      predecessors: [39]
+    - name: "Ввод начальных остатков"
+      duration: 40
+      predecessors: ["41SS+5d"]
+    - name: "Ввод начальных данных завершён"
+      duration: 0
+      predecessors: [42]
+    - name: "Обучение персонала"
+      duration: 0
+      predecessors: []
+    - name: "Принципы работы системы"
+      duration: 3
+      predecessors: [39]
+    - name: "Изучение интерфейса"
+      duration: 5
+      predecessors: [45]
+    - name: "Изучение справочников"
+      duration: 20
+      predecessors: [41, 46]
+    - name: "Изучение документов и журналов"
+      duration: 30
+      predecessors: [42, 47]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [48]
+    - name: "Передача в эксплуатацию"
+      duration: 0
+      predecessors: []
+    - name: "Формирование тестовой отчётности"
+      duration: 5
+      predecessors: [49]
+    - name: "Акт ввода в эксплуатацию"
+      duration: 3
+      predecessors: [51]
+    - name: "Передача в эксплуатацию завершена"
+      duration: 0
+      predecessors: [52]
+    - name: "Конец проекта"
+      duration: 0
+      predecessors: [53]
+  constraints:
+    - task_id: 42
+      type: 3    # Start No Earlier Than
+      date: "01.01.2012"
+variant2:
+  project_file: "C:\\Projects\\ВнедрениеБухУч\\ВнедрениеБухУч.mpp"
+  project_start: "01.05.2011"
+  view_names:
+    - "Панель представлений"
+    - "ViewBar"
+  base_calendar_index: 1
+  exceptions:
+    - name: "День согласия и примирения"
+      start: "04.11.2009"
+    - name: "Новогодние праздники"
+      start: "31.12.2009"
+      finish: "10.01.2010"
+  tasks:
+    - name: "Начало проекта"
+      duration: 0
+      predecessors: []
+    - name: "Выбор системы"
+      duration: 0
+      predecessors: []
+    - name: "Изучение рынка бухгалтерских систем"
+      duration: 7
+      predecessors: [1]
+    - name: "Составление требований к бухгалтерским системам"
+      duration: 5
+      predecessors: [1]
+    - name: "Консультации с фирмами-разработчиками"
+      duration: 4
+      predecessors: [3, 4]
+    - name: "Принятие окончательного решения"
+      duration: 3
+      predecessors: [5]
+    - name: "Выбор завершён"
+      duration: 0
+      predecessors: [6]
+    - name: "Приобретение программного обеспечения"
+      duration: 0
+      predecessors: []
+    - name: "Заключение договоров"
+      duration: 10
+      predecessors: [7]
+    - name: "Оплата за ПО"
+      duration: 5
+      predecessors: [9]
+    - name: "Оформление ПО на баланс"
+      duration: 3
+      predecessors: ["10FS+5d"]
+    - name: "Приобретение ПО завершено"
+      duration: 0
+      predecessors: [11]
+    - name: "Составление проекта сети"
+      duration: 0
+      predecessors: []
+    - name: "Разработка архитектуры сети"
+      duration: 5
+      predecessors: [7]
+    - name: "Проработка физического размещения сети"
+      duration: 3
+      predecessors: [14]
+    - name: "Проект сети завершён"
+      duration: 0
+      predecessors: [15]
+    - name: "Приобретение компьютеров и сетевого оборудования"
+      duration: 0
+      predecessors: []
+    - name: "Сбор информации о поставщиках и предложениях"
+      duration: 5
+      predecessors: [7]
+    - name: "Анализ и выбор поставщика"
+      duration: 6
+      predecessors: [14, 18]
+    - name: "Заключение договоров"
+      duration: 7
+      predecessors: [19]
+    - name: "Оплата за оборудование"
+      duration: 4
+      predecessors: [20]
+    - name: "Оформление оборудования на баланс"
+      duration: 3
+      predecessors: ["21FS+7d"]
+    - name: "Приобретение оборудования завершено"
+      duration: 0
+      predecessors: [22]
+    - name: "Обучение администратора и программиста"
+      duration: 0
+      predecessors: []
+    - name: "Курсы администраторов"
+      duration: 14
+      predecessors: [16]
+    - name: "Курсы программистов"
+      duration: 21
+      predecessors: [12]
+    - name: "Сдача сертификационных экзаменов"
+      duration: 4
+      predecessors: [25, 26]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [27]
+    - name: "Монтаж локальной сети"
+      duration: 0
+      predecessors: []
+    - name: "Установка компьютеров на рабочих местах"
+      duration: 3
+      predecessors: [23, 28]
+    - name: "Монтаж кабеля"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Монтаж сетевых устройств"
+      duration: 4
+      predecessors: [23, 28]
+    - name: "Подключение кабеля к компьютерам и сетевым устройствам"
+      duration: 5
+      predecessors: [30, 31, 32]
+    - name: "Монтаж завершён"
+      duration: 0
+      predecessors: [33]
+    - name: "Установка ПО на компьютеры"
+      duration: 0
+      predecessors: []
+    - name: "Установка сервера"
+      duration: 5
+      predecessors: [34]
+    - name: "Создание доменов и пользователей"
+      duration: 4
+      predecessors: [36]
+    - name: "Проверка и настройка работы сети"
+      duration: 5
+      predecessors: [37]
+    - name: "Настройка сети завершена"
+      duration: 0
+      predecessors: [38]
+    - name: "Ввод начальных данных"
+      duration: 0
+      predecessors: []
+    - name: "Ввод справочников"
+      duration: 40
+      predecessors: [39]
+    - name: "Ввод начальных остатков"
+      duration: 50
+      predecessors: [41]
+    - name: "Ввод начальных данных завершён"
+      duration: 0
+      predecessors: [42]
+    - name: "Обучение персонала"
+      duration: 0
+      predecessors: []
+    - name: "Принципы работы системы"
+      duration: 3
+      predecessors: [39]
+    - name: "Изучение интерфейса"
+      duration: 15
+      predecessors: [45]
+    - name: "Изучение справочников"
+      duration: 10
+      predecessors: ["41SS+5d", 46]
+    - name: "Изучение документов и журналов"
+      duration: 25
+      predecessors: [42, 47]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [48]
+    - name: "Передача в эксплуатацию"
+      duration: 0
+      predecessors: []
+    - name: "Формирование тестовой отчётности"
+      duration: 5
+      predecessors: [49]
+    - name: "Акт ввода в эксплуатацию"
+      duration: 3
+      predecessors: [51]
+    - name: "Передача в эксплуатацию завершена"
+      duration: 0
+      predecessors: [52]
+    - name: "Конец проекта"
+      duration: 0
+      predecessors: [53]
+  constraints:
+    - task_id: 42
+      type: 3    # Start No Earlier Than
+      date: "15.12.2011"
+variant3:
+  project_file: "C:\\Projects\\ВнедрениеБухУч\\ВнедрениеБухУч.mpp"
+  project_start: "01.08.2011"
+  view_names:
+    - "Панель представлений"
+    - "ViewBar"
+  base_calendar_index: 1
+  exceptions:
+    - name: "День согласия и примирения"
+      start: "04.11.2009"
+    - name: "Новогодние праздники"
+      start: "31.12.2009"
+      finish: "10.01.2010"
+  tasks:
+    - name: "Начало проекта"
+      duration: 0
+      predecessors: []
+    - name: "Выбор системы"
+      duration: 0
+      predecessors: []
+    - name: "Изучение рынка бухгалтерских систем"
+      duration: 10
+      predecessors: [1]
+    - name: "Составление требований к бухгалтерским системам"
+      duration: 7
+      predecessors: [1]
+    - name: "Консультации с фирмами-разработчиками"
+      duration: 10
+      predecessors: [3, 4]
+    - name: "Принятие окончательного решения"
+      duration: 7
+      predecessors: [5]
+    - name: "Выбор завершён"
+      duration: 0
+      predecessors: [6]
+    - name: "Приобретение программного обеспечения"
+      duration: 0
+      predecessors: []
+    - name: "Заключение договоров"
+      duration: 5
+      predecessors: [7]
+    - name: "Оплата за ПО"
+      duration: 5
+      predecessors: [9]
+    - name: "Оформление ПО на баланс"
+      duration: 4
+      predecessors: ["10FS+5d"]
+    - name: "Приобретение ПО завершено"
+      duration: 0
+      predecessors: [11]
+    - name: "Составление проекта сети"
+      duration: 0
+      predecessors: []
+    - name: "Разработка архитектуры сети"
+      duration: 14
+      predecessors: [7]
+    - name: "Проработка физического размещения сети"
+      duration: 5
+      predecessors: [14]
+    - name: "Проект сети завершён"
+      duration: 0
+      predecessors: [15]
+    - name: "Приобретение компьютеров и сетевого оборудования"
+      duration: 0
+      predecessors: []
+    - name: "Сбор информации о поставщиках и предложениях"
+      duration: 10
+      predecessors: [7]
+    - name: "Анализ и выбор поставщика"
+      duration: 5
+      predecessors: [14, 18]
+    - name: "Заключение договоров"
+      duration: 5
+      predecessors: [19]
+    - name: "Оплата за оборудование"
+      duration: 2
+      predecessors: [20]
+    - name: "Оформление оборудования на баланс"
+      duration: 3
+      predecessors: ["21FS+7d"]
+    - name: "Приобретение оборудования завершено"
+      duration: 0
+      predecessors: [22]
+    - name: "Обучение администратора и программиста"
+      duration: 0
+      predecessors: []
+    - name: "Курсы администраторов"
+      duration: 21
+      predecessors: [16]
+    - name: "Курсы программистов"
+      duration: 14
+      predecessors: [12]
+    - name: "Сдача сертификационных экзаменов"
+      duration: 5
+      predecessors: [25, 26]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [27]
+    - name: "Монтаж локальной сети"
+      duration: 0
+      predecessors: []
+    - name: "Установка компьютеров на рабочих местах"
+      duration: 3
+      predecessors: [23, 28]
+    - name: "Монтаж кабеля"
+      duration: 10
+      predecessors: [23, 28]
+    - name: "Монтаж сетевых устройств"
+      duration: 10
+      predecessors: [23, 28]
+    - name: "Подключение кабеля к компьютерам и сетевым устройствам"
+      duration: 5
+      predecessors: [30, 31, 32]
+    - name: "Монтаж завершён"
+      duration: 0
+      predecessors: [33]
+    - name: "Установка ПО на компьютеры"
+      duration: 0
+      predecessors: []
+    - name: "Установка сервера"
+      duration: 5
+      predecessors: [34]
+    - name: "Создание доменов и пользователей"
+      duration: 7
+      predecessors: [36]
+    - name: "Проверка и настройка работы сети"
+      duration: 5
+      predecessors: [37]
+    - name: "Настройка сети завершена"
+      duration: 0
+      predecessors: [38]
+    - name: "Ввод начальных данных"
+      duration: 0
+      predecessors: []
+    - name: "Ввод справочников"
+      duration: 40
+      predecessors: [39]
+    - name: "Ввод начальных остатков"
+      duration: 40
+      predecessors: [41]
+    - name: "Ввод начальных данных завершён"
+      duration: 0
+      predecessors: [42]
+    - name: "Обучение персонала"
+      duration: 0
+      predecessors: []
+    - name: "Принципы работы системы"
+      duration: 3
+      predecessors: [39]
+    - name: "Изучение интерфейса"
+      duration: 5
+      predecessors: [45]
+    - name: "Изучение справочников"
+      duration: 20
+      predecessors: [41, 46]
+    - name: "Изучение документов и журналов"
+      duration: 30
+      predecessors: [42, 47]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [48]
+    - name: "Передача в эксплуатацию"
+      duration: 0
+      predecessors: []
+    - name: "Формирование тестовой отчётности"
+      duration: 5
+      predecessors: [49]
+    - name: "Акт ввода в эксплуатацию"
+      duration: 3
+      predecessors: [51]
+    - name: "Передача в эксплуатацию завершена"
+      duration: 0
+      predecessors: [52]
+    - name: "Конец проекта"
+      duration: 0
+      predecessors: [53]
+  constraints:
+    - task_id: 42
+      type: 3    # Start No Earlier Than
+      date: "01.02.2012"
+variant4:
+  project_file: "C:\\Projects\\ВнедрениеБухУч\\ВнедрениеБухУч.mpp"
+  project_start: "01.09.2011"
+  view_names:
+    - "Панель представлений"
+    - "ViewBar"
+  base_calendar_index: 1
+  exceptions:
+    - name: "День согласия и примирения"
+      start: "04.11.2009"
+    - name: "Новогодние праздники"
+      start: "31.12.2009"
+      finish: "10.01.2010"
+  tasks:
+    - name: "Начало проекта"
+      duration: 0
+      predecessors: []
+    - name: "Выбор системы"
+      duration: 0
+      predecessors: []
+    - name: "Изучение рынка бухгалтерских систем"
+      duration: 14
+      predecessors: [1]
+    - name: "Составление требований к бухгалтерским системам"
+      duration: 8
+      predecessors: [1]
+    - name: "Консультации с фирмами-разработчиками"
+      duration: 5
+      predecessors: [3, 4]
+    - name: "Принятие окончательного решения"
+      duration: 10
+      predecessors: [5]
+    - name: "Выбор завершён"
+      duration: 0
+      predecessors: [6]
+    - name: "Приобретение программного обеспечения"
+      duration: 0
+      predecessors: []
+    - name: "Заключение договоров"
+      duration: 7
+      predecessors: [7]
+    - name: "Оплата за ПО"
+      duration: 7
+      predecessors: [9]
+    - name: "Оформление ПО на баланс"
+      duration: 2
+      predecessors: ["10FS+5d"]
+    - name: "Приобретение ПО завершено"
+      duration: 0
+      predecessors: [11]
+    - name: "Составление проекта сети"
+      duration: 0
+      predecessors: []
+    - name: "Разработка архитектуры сети"
+      duration: 17
+      predecessors: [7]
+    - name: "Проработка физического размещения сети"
+      duration: 5
+      predecessors: [14]
+    - name: "Проект сети завершён"
+      duration: 0
+      predecessors: [15]
+    - name: "Приобретение компьютеров и сетевого оборудования"
+      duration: 0
+      predecessors: []
+    - name: "Сбор информации о поставщиках и предложениях"
+      duration: 10
+      predecessors: [7]
+    - name: "Анализ и выбор поставщика"
+      duration: 5
+      predecessors: [14, 18]
+    - name: "Заключение договоров"
+      duration: 5
+      predecessors: [19]
+    - name: "Оплата за оборудование"
+      duration: 7
+      predecessors: [20]
+    - name: "Оформление оборудования на баланс"
+      duration: 3
+      predecessors: ["21FS+7d"]
+    - name: "Приобретение оборудования завершено"
+      duration: 0
+      predecessors: [22]
+    - name: "Обучение администратора и программиста"
+      duration: 0
+      predecessors: []
+    - name: "Курсы администраторов"
+      duration: 14
+      predecessors: [16]
+    - name: "Курсы программистов"
+      duration: 14
+      predecessors: [12]
+    - name: "Сдача сертификационных экзаменов"
+      duration: 7
+      predecessors: [25, 26]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [27]
+    - name: "Монтаж локальной сети"
+      duration: 0
+      predecessors: []
+    - name: "Установка компьютеров на рабочих местах"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Монтаж кабеля"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Монтаж сетевых устройств"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Подключение кабеля к компьютерам и сетевым устройствам"
+      duration: 5
+      predecessors: [30, 31, 32]
+    - name: "Монтаж завершён"
+      duration: 0
+      predecessors: [33]
+    - name: "Установка ПО на компьютеры"
+      duration: 0
+      predecessors: []
+    - name: "Установка сервера"
+      duration: 5
+      predecessors: [34]
+    - name: "Создание доменов и пользователей"
+      duration: 7
+      predecessors: [36]
+    - name: "Проверка и настройка работы сети"
+      duration: 5
+      predecessors: [37]
+    - name: "Настройка сети завершена"
+      duration: 0
+      predecessors: [38]
+    - name: "Ввод начальных данных"
+      duration: 0
+      predecessors: []
+    - name: "Ввод справочников"
+      duration: 30
+      predecessors: [39]
+    - name: "Ввод начальных остатков"
+      duration: 30
+      predecessors: [41]
+    - name: "Ввод начальных данных завершён"
+      duration: 0
+      predecessors: [42]
+    - name: "Обучение персонала"
+      duration: 0
+      predecessors: []
+    - name: "Принципы работы системы"
+      duration: 3
+      predecessors: [39]
+    - name: "Изучение интерфейса"
+      duration: 5
+      predecessors: [45]
+    - name: "Изучение справочников"
+      duration: 20
+      predecessors: ["41SS+5d", 46]
+    - name: "Изучение документов и журналам"
+      duration: 30
+      predecessors: [42, 47]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [48]
+    - name: "Передача в эксплуатацию"
+      duration: 0
+      predecessors: []
+    - name: "Формирование тестовой отчётности"
+      duration: 5
+      predecessors: [49]
+    - name: "Акт ввода в эксплуатацию"
+      duration: 3
+      predecessors: [51]
+    - name: "Передача в эксплуатацию завершена"
+      duration: 0
+      predecessors: [52]
+    - name: "Конец проекта"
+      duration: 0
+      predecessors: [53]
+  constraints:
+    - task_id: 42
+      type: 3    # Start No Earlier Than
+      date: "01.03.2012"
+variant5:
+  project_file: "C:\\Projects\\ВнедрениеБухУч\\ВнедрениеБухУч.mpp"
+  project_start: "01.10.2011"
+  view_names:
+    - "Панель представлений"
+    - "ViewBar"
+  base_calendar_index: 1
+  exceptions:
+    - name: "День согласия и примирения"
+      start: "04.11.2009"
+    - name: "Новогодние праздники"
+      start: "31.12.2009"
+      finish: "10.01.2010"
+  tasks:
+    - name: "Начало проекта"
+      duration: 0
+      predecessors: []
+    - name: "Выбор системы"
+      duration: 0
+      predecessors: []
+    - name: "Изучение рынка бухгалтерских систем"
+      duration: 19
+      predecessors: [1]
+    - name: "Составление требований к бухгалтерским системам"
+      duration: 4
+      predecessors: [1]
+    - name: "Консультации с фирмами-разработчиками"
+      duration: 7
+      predecessors: [3, 4]
+    - name: "Принятие окончательного решения"
+      duration: 3
+      predecessors: [5]
+    - name: "Выбор завершён"
+      duration: 0
+      predecessors: [6]
+    - name: "Приобретение программного обеспечения"
+      duration: 0
+      predecessors: []
+    - name: "Заключение договоров"
+      duration: 7
+      predecessors: [7]
+    - name: "Оплата за ПО"
+      duration: 7
+      predecessors: [9]
+    - name: "Оформление ПО на баланс"
+      duration: 2
+      predecessors: ["10FS+5d"]
+    - name: "Приобретение ПО завершено"
+      duration: 0
+      predecessors: [11]
+    - name: "Составление проекта сети"
+      duration: 0
+      predecessors: []
+    - name: "Разработка архитектуры сети"
+      duration: 17
+      predecessors: [7]
+    - name: "Проработка физического размещения сети"
+      duration: 5
+      predecessors: [14]
+    - name: "Проект сети завершён"
+      duration: 0
+      predecessors: [15]
+    - name: "Приобретение компьютеров и сетевого оборудования"
+      duration: 0
+      predecessors: []
+    - name: "Сбор информации о поставщиках и предложениях"
+      duration: 10
+      predecessors: [7]
+    - name: "Анализ и выбор поставщика"
+      duration: 5
+      predecessors: [14, 18]
+    - name: "Заключение договоров"
+      duration: 5
+      predecessors: [19]
+    - name: "Оплата за оборудование"
+      duration: 7
+      predecessors: [20]
+    - name: "Оформление оборудования на баланс"
+      duration: 3
+      predecessors: ["21FS+7d"]
+    - name: "Приобретение оборудования завершено"
+      duration: 0
+      predecessors: [22]
+    - name: "Обучение администратора и программиста"
+      duration: 0
+      predecessors: []
+    - name: "Курсы администраторов"
+      duration: 14
+      predecessors: [16]
+    - name: "Курсы программистов"
+      duration: 20
+      predecessors: [12]
+    - name: "Сдача сертификационных экзаменов"
+      duration: 5
+      predecessors: [25, 26]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [27]
+    - name: "Монтаж локальной сети"
+      duration: 0
+      predecessors: []
+    - name: "Установка компьютеров на рабочих местах"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Монтаж кабеля"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Монтаж сетевых устройств"
+      duration: 5
+      predecessors: [23, 28]
+    - name: "Подключение кабеля к компьютерам и сетевым устройствам"
+      duration: 5
+      predecessors: [30, 31, 32]
+    - name: "Монтаж завершён"
+      duration: 0
+      predecessors: [33]
+    - name: "Установка ПО на компьютеры"
+      duration: 0
+      predecessors: []
+    - name: "Установка сервера"
+      duration: 5
+      predecessors: [34]
+    - name: "Создание доменов и пользователей"
+      duration: 7
+      predecessors: [36]
+    - name: "Проверка и настройка работы сети"
+      duration: 5
+      predecessors: [37]
+    - name: "Настройка сети завершена"
+      duration: 0
+      predecessors: [38]
+    - name: "Ввод начальных данных"
+      duration: 0
+      predecessors: []
+    - name: "Ввод справочников"
+      duration: 30
+      predecessors: [39]
+    - name: "Ввод начальных остатков"
+      duration: 30
+      predecessors: [41]
+    - name: "Ввод начальных данных завершён"
+      duration: 0
+      predecessors: [42]
+    - name: "Обучение персонала"
+      duration: 0
+      predecessors: []
+    - name: "Принципы работы системы"
+      duration: 3
+      predecessors: [39]
+    - name: "Изучение интерфейса"
+      duration: 5
+      predecessors: [45]
+    - name: "Изучение справочников"
+      duration: 20
+      predecessors: ["41SS+5d", 46]
+    - name: "Изучение документов и журналов"
+      duration: 30
+      predecessors: [42, 47]
+    - name: "Обучение завершено"
+      duration: 0
+      predecessors: [48]
+    - name: "Передача в эксплуатацию"
+      duration: 0
+      predecessors: []
+    - name: "Формирование тестовой отчётности"
+      duration: 5
+      predecessors: [49]
+    - name: "Акт ввода в эксплуатацию"
+      duration: 3
+      predecessors: [51]
+    - name: "Передача в эксплуатацию завершена"
+      duration: 0
+      predecessors: [52]
+    - name: "Конец проекта"
+      duration: 0
+      predecessors: [53]
+  constraints:
+    - task_id: 42
+      type: 3    # Start No Earlier Than
+      date: "01.04.2012"
