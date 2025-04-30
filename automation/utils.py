@@ -11,17 +11,10 @@ import pygetwindow as gw
 
 
 def ensure_dir(path):
-    """
-    Создаёт директорию и все промежуточные, если их нет.
-    """
     Path(path).mkdir(parents=True, exist_ok=True)
 
 
 def try_call(obj, *names, **kwargs):
-    """
-    Пытается вызвать метод объекта по списку возможных имён.
-    Возвращает True при первом успехе, иначе False.
-    """
     for name in names:
         try:
             getattr(obj, name)(**kwargs)
@@ -32,9 +25,6 @@ def try_call(obj, *names, **kwargs):
 
 
 def focus(title):
-    """
-    Активирует окно с данным заголовком. Пауза 0.3 с после активации.
-    """
     for w in gw.getWindowsWithTitle(title):
         if not w.isActive:
             w.activate()
@@ -43,19 +33,23 @@ def focus(title):
 
 
 def shot(idx, code, out_dir="screenshots"):
-    """
-    Делаем скриншот экрана и сохраняем в директорию out_dir
-    с именем {idx:02d}_{code}.png.
-    """
     ensure_dir(out_dir)
-    filename = Path(out_dir) / f"{idx:02d}_{code}.png"
-    pyautogui.screenshot(str(filename))
+    fn = Path(out_dir) / f"{idx:02d}_{code}.png"
+    pyautogui.screenshot(str(fn))
 
 
 def save_as(app, fname, out_dir="outputs"):
     """
-    Сохраняет текущий проект MS Project как файл fname в out_dir.
+    Если fname — абсолютный путь, сохраняем туда напрямую.
+    Иначе — в папку out_dir/fname.
     """
-    ensure_dir(out_dir)
-    fullpath = Path(out_dir) / fname
-    app.FileSaveAs(str(fullpath))
+    p = Path(fname)
+    if p.is_absolute():
+        # создаём директорию, если нужно
+        p.parent.mkdir(parents=True, exist_ok=True)
+        app.FileSaveAs(str(p))
+    else:
+        ensure_dir(out_dir)
+        full = Path(out_dir) / fname
+        full.parent.mkdir(parents=True, exist_ok=True)
+        app.FileSaveAs(str(full))

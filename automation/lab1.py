@@ -19,10 +19,9 @@ PROJECTS_DIR  = Path(__file__).parent.parent / 'projects'
 SAVE_DIR      = Path('outputs') / 'lab1'
 SCREEN_DIR    = Path('screenshots') / 'lab1'
 LOG_FILE      = Path('logs') / 'lab1.log'
-PAUSE         = 0.7  # пауза между шагами
+PAUSE         = 0.7
 # ───────────────────────────────────────────────────────
 
-# Загрузка параметров по варианту
 if len(sys.argv) < 2:
     print("Usage: python -m automation.lab1 <variant>")
     sys.exit(1)
@@ -34,12 +33,11 @@ if VARIANT not in cfg_all:
     sys.exit(1)
 cfg = cfg_all[VARIANT]
 
-# Генерируем путь к .mpp в папке projects/
+# путь к проекту: projects/<variant>.mpp
 PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
 PROJECT_FILE = PROJECTS_DIR / f"{VARIANT}.mpp"
 BASE_CALENDAR = cfg.get('base_calendar_index', 1)
 
-# Настройка логирования
 logging.basicConfig(
     filename=str(LOG_FILE), level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s",
@@ -52,9 +50,8 @@ def step01(app):
         logging.info("Manual: настройка представлений")
         raise AttributeError("View setup manual")
 
-@safe_step()
+@safe_step()  # просто сохранение
 def step02(app):
-    # Просто сохраняем в уже существующий файл
     pass
 
 @safe_step("Лаба1_03_SetStart.mpp")
@@ -72,22 +69,31 @@ def step04(app):
 def step05(app):
     proj = app.ActiveProject
     minutes_per_day = proj.HoursPerDay * 60
+    # добавляем задачи
     for entry in cfg['tasks']:
         t = proj.Tasks.Add(entry['name'])
         t.Duration = entry['duration'] * minutes_per_day
         if entry['duration'] == 0:
             t.Milestone = True
+
+    # ставим предшественники в try/except
     for idx, entry in enumerate(cfg['tasks'], start=1):
         preds = entry.get('predecessors')
-        if preds:
+        if not preds:
+            continue
+        try:
             proj.Tasks(idx).Predecessors = ";".join(str(p) for p in preds)
+        except Exception as e:
+            logging.info("skip preds for task %s (%s): %s", idx, entry['name'], e)
+
+    # ограничения
     for constr in cfg.get('constraints', []):
         t = proj.Tasks(constr['task_id'])
         t.ConstraintType = constr['type']
         t.ConstraintDate = constr['date']
 
+
 def run():
-    # Гарантируем, что все папки есть
     ensure_dir(PROJECTS_DIR)
     ensure_dir(SAVE_DIR)
     ensure_dir(SCREEN_DIR)
@@ -95,12 +101,11 @@ def run():
     app = Dispatch("MSProject.Application")
     app.Visible = True
 
-    # Если проект ещё не существует — создаём и сохраняем
     if not PROJECT_FILE.exists():
         print(f"Файл {PROJECT_FILE} не найден — создаю новый проект...")
         app.FileNew()
-        # теперь сохраняем туда же
-        app.FileSaveAs(str(PROJECT_FILE))
+        # сохраняем сразу в projects/<variant>.mpp
+        save_as(app, str(PROJECT_FILE))
     else:
         app.FileOpen(str(PROJECT_FILE))
 
