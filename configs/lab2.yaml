@@ -1,0 +1,18 @@
+project_file: "C:\\Projects\\ВнедрениеБухУч\\ВнедрениеБухУч_3.mpp"  # или любой итоговый из lab1
+bar_style_all:
+  enabled: true
+bar_style:
+  start_shape: "синий ромб"
+  end_shape: "синий ромб"
+  inside_text: "длительность"
+gantt_format:
+  summary_color: "crimson"
+  milestone_color: "black"
+  critical_color: "red"
+  noncritical_color: "blue"
+  header_bold: true
+  header_color: "brown"
+  middle_timescale_color: "violet"
+timescale_format:
+  top_unit: "месяц"
+  non_working_time_color: "yellow"

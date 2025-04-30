@@ -103,12 +103,20 @@ def run():
     ensure_dir(SCREEN_DIR)
     app = Dispatch("MSProject.Application")
     app.Visible = True
-    app.FileOpen(PROJECT_FILE)
+
+    if not Path(PROJECT_FILE).exists():
+        print(f"Файл {PROJECT_FILE} не найден, создаю новый проект...")
+        app.FileNew()
+        app.FileSaveAs(PROJECT_FILE)
+    else:
+        app.FileOpen(PROJECT_FILE)
+
     steps = [step01, step02, step03, step04, step05]
     for idx, fn in enumerate(steps, 1):
         fn(app, idx, fn.__name__)
         time.sleep(PAUSE)
     print(f"Done Lab1 variant {VARIANT}")
+
 
 if __name__ == "__main__":
     run()
