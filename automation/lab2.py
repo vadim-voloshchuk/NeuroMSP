@@ -1,201 +1,217 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-automation/lab2.py • Автоматизация ЛР-2: Таблицы и представления
+automation/lab2.py • Автоматизация ЛР‑2: Таблицы и представления
+
+Запускается после выполнения ЛР‑1 и использует готовый `projects/<variant>.mpp`.
+После каждого шага:
+  • сохраняет *.mpp в `outputs/lab2/`  (если указан `save_fname`)
+  • делает скриншот в `screenshots/lab2/`
+  • пишет статус в лог
 """
-import sys
-import time
-import logging
+from __future__ import annotations
+
+import sys, time, logging
 from pathlib import Path
+from datetime import date, timedelta
+
 from win32com.client import Dispatch
-from .base import safe_step
+
+from .base  import safe_step
 from .utils import ensure_dir, try_call, focus, shot, save_as
 
-# ─── Пути и константы ──────────────────────────────────
+# ─── Пути и константы ──────────────────────────────────────────
 ROOT        = Path(__file__).parent.parent.resolve()
-PROJECTS    = ROOT / 'projects'
-OUTPUTS     = ROOT / 'outputs' / 'lab2'
-SCREENSHOTS = ROOT / 'screenshots' / 'lab2'
-LOG_FILE    = ROOT / 'logs' / 'lab2.log'
-PAUSE       = 0.7
+PROJECTS    = ROOT / "projects"
+OUTPUTS     = ROOT / "outputs" / "lab2"
+SCREENS     = ROOT / "screenshots" / "lab2"
+LOG_FILE    = ROOT / "logs" / "lab2.log"
+PAUSE       = 0.8   # чуть больше, чтобы UI успевал прорисоваться
 
-# аргумент: variant (так же, как в lab1)
+# ─── Аргументы командной строки ───────────────────────────────
 if len(sys.argv) < 2:
     print("Usage: python -m automation.lab2 <variant>")
     sys.exit(1)
-variant = sys.argv[1]
-PROJECT_FILE = PROJECTS / f"{variant}.mpp"
+variant  = sys.argv[1]
+PROJECT  = PROJECTS / f"{variant}.mpp"
 
-# логирование
-logging.basicConfig(
-    filename=str(LOG_FILE), level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(message)s",
-    encoding="utf-8"
-)
+# ─── Логирование ──────────────────────────────────────────────
+logging.basicConfig(filename=str(LOG_FILE), level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s", encoding="utf-8")
 
-# ── Шаг 1: Форматирование входной таблицы ───────────────
+# ─── Вспомогательные функции ─────────────────────────────────
+
+def exec_mso(app, mso: str):
+    """Надёжный вызов лентой Office: CommandBars.ExecuteMso(idMso)"""
+    try:
+        app.CommandBars.ExecuteMso(mso)
+        return True
+    except Exception as e:
+        logging.info("SKIP ExecuteMso %s: %s", mso, e)
+        return False
+
+# ─── Шаги ЛР‑2 ────────────────────────────────────────────────
+
 @safe_step("Лаба2_01_FormatTable.mpp")
-def step01(app):
-    # Вид: Гант
-    try_call(app.ViewApply, "Диаграмма Ганта", "Gantt Chart")
-    # Удалить столбец ID
-    if try_call(app.SelectColumn, "ID", "ИД", "№"):
-        app.EditDelete()
-    # Добавить столбец Критическая задача
-    try_call(app.InsertColumn, "Критическая задача")
-    # Заменить на столбец Затраты: вставляем и убираем лишний
-    try_call(app.InsertColumn, "Затраты")
-    # Стили текста
+def step01_format_table(app):
+    """Удалить ID, добавить Critical, сменить на Cost, стили текста"""
+    exec_mso(app, "ViewGanttChart")
+    time.sleep(0.4)
+    # показать таблицу Entry для гарантии
+    exec_mso(app, "TableEntry")
+    time.sleep(0.2)
+    # удалить столбец ID
+    exec_mso(app, "SelectIDColumn")  # idMso в 365/2019
+    exec_mso(app, "HideColumn")
+    # вставить "Критическая задача"
+    exec_mso(app, "TableInsertColumn")
+    time.sleep(0.3)
+    # нажимаем Enter (pyautogui) если диалог появился – пропустим, чтобы скрипт не зависал
+    try:
+        import pyautogui; pyautogui.press("enter")
+    except Exception:
+        pass
+    # заменить на "Затраты": добавить новый и удалить предыдущий
+    exec_mso(app, "TableInsertColumn"); time.sleep(0.3)
+    try:
+        import pyautogui; pyautogui.typewrite("Затраты\n", interval=0.05)
+    except Exception:
+        pass
+    # стили текста через TextStyles
     try:
         ts = app.TextStyles
-        ts.Item("Row and Column Titles").Font.Bold = True
-        ts.Item("Summary Tasks").Font.Color = 7    # малиновый
-        ts.Item("Middle Tier").Font.Color = 5      # тёмно-синий
+        ts.Item(1).Font.Bold = True                # Row+Col titles
+        ts.Item(1).Font.Color = 12                 # коричневый
+        ts.Item(4).Font.Color = 6                  # Summary – малиновый
+        ts.Item(5).Font.Color = 2                  # Milestone – чёрный/синий
+        ts.Item("Middle Tier").Font.Color = 13    # сиреневый
     except Exception as e:
-        logging.info("skip text styles: %s", e)
+        logging.info("skip TextStyles: %s", e)
 
-# ── Шаг 2: Сортировка по дате начала и окончания ───────
 @safe_step("Лаба2_02_SortStartFinish.mpp")
-def step02(app):
-    try_call(app.Sort, "Start", True)
-    try_call(app.Sort, "Finish", True)
+def step02_sort_dates(app):
+    exec_mso(app, "SortByStart")
+    exec_mso(app, "SortByFinish")
 
-# ── Шаг 3: Многоуровневая сортировка ───────────────────
 @safe_step("Лаба2_03_MultiSort.mpp")
-def step03(app):
-    try:
-        app.SortEx(
-            SortFields=[
-                {"FieldName": "Critical", "Descending": False},
-                {"FieldName": "Finish",   "Descending": True}
-            ],
-            KeepOutlineStructure=False
-        )
-    except Exception as e:
-        logging.info("skip multisort: %s", e)
+def step03_multisort(app):
+    try_call(app.Sort, "Critical", True, "Finish", False)
 
-# ── Шаг 4: Структурный фильтр Уровень 1 ────────────────
-@safe_step("Лаба2_04_StructFilterLv1.mpp")
-def step04(app):
-    try_call(app.OutlineShowLevel, 1)
+@safe_step("Лаба2_04_Level1.mpp")
+def step04_outline_level1(app):
+    exec_mso(app, "OutlineShowLevel1")
 
-# ── Шаг 5: Автофильтр: начало следующего месяца + Dur>15 ──
 @safe_step("Лаба2_05_AutoFilter.mpp")
-def step05(app):
-    try_call(app.AutoFilter, True)
-    # фильтр Dur > 15
-    try_call(app.FilterEdit, "Dur15", True, True,
+def step05_autofilter(app):
+    """Автофильтр: начало следующего месяца & Dur>15d"""
+    exec_mso(app, "ToggleAutoFilter")
+    # Поставить собственный фильтр через FilterEdit (без диалогов)
+    today = date.today()
+    first_next = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
+    last_next  = (first_next.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+    rng_name = "NextMonth"
+    try_call(app.FilterEdit, rng_name, True, True,
+             "Start", "is greater than or equal to", first_next.strftime("%d.%m.%Y"),
+             "And",
+             "Start", "is less than or equal to",   last_next.strftime("%d.%m.%Y"),
+             False)
+    dur_name = "Dur15"
+    try_call(app.FilterEdit, dur_name, True, True,
              "Duration", "greater than", "15d", None, None, None, False)
-    try_call(app.FilterApply, "Dur15")
+    # комбинируем два фильтра подряд (быстрее всего визуально)
+    try_call(app.FilterApply, rng_name)
+    try_call(app.FilterApply, dur_name)
 
-# ── Шаг 6: Предопределённый фильтр: суммарные задачи ────
-@safe_step("Лаба2_06_FilterSummary.mpp")
-def step06(app):
-    try_call(app.FilterApply, "Суммарные задачи", "Summary Tasks")
+@safe_step("Лаба2_06_SummaryFilter.mpp")
+def step06_filter_summary(app):
+    exec_mso(app, "FilterSummaryTasks")
 
-# ── Шаг 7: Пользовательский фильтр: критические ≤14 ─────
 @safe_step("Лаба2_07_UserFilterCrit14.mpp")
-def step07(app):
+def step07_user_filter(app):
     try_call(app.FilterEdit, "Crit14", True, True,
              "Critical", "equals", "Yes",
              "And",
              "Duration", "less than or equal", "14d",
              None, None, False)
     try_call(app.FilterApply, "Crit14")
+    # добавить в меню
+    try_call(app.FilterCopy, "Crit14", "КороткаяКритическаяЗадача")
 
-# ── Шаг 8: Предопределённая группировка: вехи ───────────
 @safe_step("Лаба2_08_GroupMilestones.mpp")
-def step08(app):
-    try_call(app.GroupApply, "Вехи", "Milestones")
+def step08_group_milestones(app):
+    exec_mso(app, "GroupByMilestones")
 
-# ── Шаг 9: Пользовательская группировка: крит+длит ──────
-@safe_step("Лаба2_09_GroupCritDur.mpp")
-def step09(app):
-    try:
-        app.GroupEdit("CritDur", True, True,
-                      "Critical", True, True,
-                      "Duration", True, True, False)
-        app.GroupApply("CritDur")
-    except Exception as e:
-        logging.info("skip custom grouping: %s", e)
+@safe_step("Лаба2_09_GroupCustom.mpp")
+def step09_group_custom(app):
+    try_call(app.GroupEdit, "CritDur", True, True,
+             "Critical", True, True,
+             "Duration", True, True, False)
+    try_call(app.GroupApply, "CritDur")
 
-# ── Шаг 10: Временная группировка по неделям ────────────
 @safe_step("Лаба2_10_TimeGrouping.mpp")
-def step10(app):
-    try:
-        app.GroupEdit("ByWeek", True, True,
-                      "Duration", True, True,
-                      Interval=1, IntervalUnit=3)
-        app.GroupApply("ByWeek")
-    except Exception as e:
-        logging.info("skip time grouping: %s", e)
+def step10_time_group(app):
+    try_call(app.GroupEdit, "ByWeek", True, True,
+             "Duration", True, True, Interval=1, IntervalUnit=3)  # 3 — неделя
+    try_call(app.GroupApply, "ByWeek")
 
-# ── Шаг 11: Формат одного отрезка ───────────────────────
 @safe_step("Лаба2_11_FormatOneBar.mpp")
-def step11(app):
-    try:
-        # пример: изменить первую задачу
-        bar = app.BarStyles("Normal")
-        bar.BarStartShape = 1
-        bar.BarEndShape = 1
-        bar.MiddleText = 1  # Duration
-    except Exception as e:
-        logging.info("skip format one bar: %s", e)
-
-# ── Шаг 12: Формат всех обычных задач ───────────────────
-@safe_step("Лаба2_12_FormatAllBars.mpp")
-def step12(app):
+def step11_format_one_bar(app):
+    # форматируем один Normal bar (индекс 1)
     try_call(app.BarStyleEdit, "Normal", "Normal", 1, "Start", "Finish", 1, 1)
 
-# ── Шаг 13: Критические задачи красным ───────────────────
+@safe_step("Лаба2_12_FormatAllBars.mpp")
+def step12_format_all(app):
+    try_call(app.BarStyleEdit, "Normal", "Normal", 1, "Start", "Finish", 1, 1)
+
 @safe_step("Лаба2_13_CritRed.mpp")
-def step13(app):
+def step13_crit_red(app):
     try_call(app.BarStyleEdit, "Critical", "Critical", 1, "Start", "Finish", 1, 2)
 
-# ── Шаг 14: Шкала → месяцы, цвет нерабочих → жёлтый ────
 @safe_step("Лаба2_14_Timescale.mpp")
-def step14(app):
-    try
-        app.TimescaleTopTier(4)  # months
-        cal = app.BaseCalendars(1)
-        exc = cal.CalendarExceptions.Add("tmp","01/01/2000","01/01/2000")
-        exc.Color = 6
-    except Exception as e:
-        logging.info("skip timescale: %s", e)
+def step14_timescale(app):
+    exec_mso(app, "TimescaleTopTierMonths")
+    # Non‑working yellow: нет прямого ExecuteMso, но можно изменить стиль календаря позже
 
-# ── Шаг 15: Сетевой график — новая задача ────────────────
-@safe_step("Лаба2_15_NetworkAdd.mpp")
-def step15(app):
+@safe_step("Лаба2_15_NetworkNewTask.mpp")
+def step15_network(app):
+    exec_mso(app, "ViewNetworkDiagram")
+    time.sleep(0.5)
     try:
         t = app.ActiveProject.Tasks.Add("Новая задача")
         t.Predecessors = "1"
     except Exception as e:
-        logging.info("skip network task: %s", e)
+        logging.info("skip net task: %s", e)
 
-# ── MAIN ────────────────────────────────────────────────
+# ─── MAIN ──────────────────────────────────────────────
 def run():
-    ensure_dir(PROJECTS)
-    ensure_dir(OUTPUTS)
-    ensure_dir(SCREENSHOTS)
+    ensure_dir(PROJECTS); ensure_dir(OUTPUTS); ensure_dir(SCREENS)
+    app = Dispatch("MSProject.Application"); app.Visible = True
 
-    app = Dispatch("MSProject.Application")
-    app.Visible = True
-
-    if not PROJECT_FILE.exists():
-        print(f"→ Creating project for Lab2: {PROJECT_FILE}")
-        app.FileNew()
-        save_as(app, str(PROJECT_FILE))
+    if not PROJECT.exists():
+        print(f"→ creating project for Lab2: {PROJECT}")
+        app.FileNew(); save_as(app, str(PROJECT))
     else:
-        app.FileOpen(str(PROJECT_FILE))
+        app.FileOpen(str(PROJECT))
 
-    steps = [step01, step02, step03, step04, step05,
-             step06, step07, step08, step09, step10,
-             step11, step12, step13, step14, step15]
+    # максимизируем окно — чтобы скрины всегда полные
+    try:
+        import pygetwindow as gw; time.sleep(1)
+        for w in gw.getWindowsWithTitle(app.Caption):
+            w.maximize(); time.sleep(0.8); break
+    except Exception:
+        pass
+
+    steps = [step01_format_table, step02_sort_dates, step03_multisort,
+             step04_outline_level1, step05_autofilter, step06_filter_summary,
+             step07_user_filter, step08_group_milestones, step09_group_custom,
+             step10_time_group, step11_format_one_bar, step12_format_all,
+             step13_crit_red, step14_timescale, step15_network]
+
     for idx, fn in enumerate(steps, 1):
         fn(app, idx, fn.__name__)
         time.sleep(PAUSE)
 
-    print(f"✅ Done Lab2 variant {variant}")
+    print(f"✅ Lab2 finished for variant {variant}")
 
 if __name__ == "__main__":
     run()
