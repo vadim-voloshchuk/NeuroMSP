@@ -23,18 +23,14 @@ logging.basicConfig(
 CATS = {0: "(Task)", 1: "(Res)", 2: "(Asn)"}
 
 def enum_tables(pj):
-    getters = (
-        (0, pj.TableList),
-        (1, pj.ResourceTableList),
-        (2, pj.AssignmentTableList),
+    collections = (
+        (0, pj.TaskTables),
+        (1, pj.ResourceTables),
+        (2, pj.AssignmentTables),
     )
-    for cat, fn in getters:
-        for idx in itertools.count(1):
-            try:
-                name = fn(idx)
-            except pywintypes.com_error:
-                break
-            yield name, cat
+    for cat, collection in collections:
+        for table in collection:
+            yield table.Name, cat
 
 
 def test_methods(app, pj):
