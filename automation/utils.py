@@ -8,6 +8,13 @@ from pathlib import Path
 import pyautogui
 import pygetwindow as gw
 
+# win32gui / win32con будут, если установлена pywin32
+try:
+    import win32gui, win32con
+except ImportError:
+    win32gui = None
+    win32con = None
+
 def ensure_dir(path):
     Path(path).mkdir(parents=True, exist_ok=True)
 
@@ -20,13 +27,31 @@ def try_call(obj, *names, **kwargs):
             continue
     return False
 
-def focus(title):
-    for w in gw.getWindowsWithTitle(title):
-        if not w.isActive:
-            w.activate()
+def focus(title: str):
+    """
+    Мягко выводим окно MS Project на передний план.
+    Без Exception — чтобы safe_step никогда не падал.
+    """
+    try:
+        for w in gw.getWindowsWithTitle(title):
+            # попытка Win32 API
+            if win32gui:
+                try:
+                    win32gui.ShowWindow(w._hWnd, win32con.SW_RESTORE)
+                    win32gui.SetForegroundWindow(w._hWnd)
+                except Exception:
+                    pass
+            # попытка метода activate()
+            try:
+                w.activate()
+            except Exception:
+                pass
             time.sleep(0.3)
             break
+    except Exception:
+        pass  # полностью подавляем все ошибки
 
+    
 def shot(idx, code, out_dir="screenshots"):
     """
     Скриншот и сохранение в абсолютный путь.
