@@ -116,6 +116,8 @@ def run():
         fn(app, idx, fn.__name__)
         time.sleep(PAUSE)
 
+    save_as(app, str(PROJECT))
+
     print(f"✅ Done Lab1 variant {variant}")
 
 if __name__=="__main__":
