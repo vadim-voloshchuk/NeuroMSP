@@ -6,168 +6,182 @@
 ###############################################################################
 
 resources:
-# ─────────────────────────  Т Р У Д О В Ы Е  ────────────────────────────────
-  - name: "Главбух"          ; short: "ГлБ"   ; type: "T"
+  # ─────────────── Т Р У Д О В Ы Е ──────────────────────────────────────────
+  - name: "Главбух"
+    short: "ГлБ"
+    type: "T"
     rates:
-      A: {std: "90000р/мес",  ot: "500р/ч"}
-      B: {per_use: 30000}
-  - name: "Администратор"    ; short: "Адм"   ; type: "T"
+      A:
+        std: "90000р/мес"
+        ot:  "500р/ч"
+      B:
+        per_use: 30000
+
+  - name: "Администратор"
+    short: "Адм"
+    type: "T"
     rates:
       A: {std: "70000р/мес",  ot: "450р/ч"}
       B: {per_use: 40000}
-  - name: "Программист"      ; short: "Прог"  ; type: "T"
+
+  - name: "Программист"
+    short: "Прог"
+    type: "T"
     rates:
       A: {std: "60000р/мес",  ot: "400р/ч"}
       B: {per_use: 50000}
-  - name: "Техник"           ; short: "Тех"   ; type: "T"
-    rates: {A: {std: "40000р/мес",  ot: "250р/ч"}}
 
-  - name: "Расчётчик1"       ; short: "Рсч1"  ; type: "T"
-    rates: {A: {std: "40000р/мес",  ot: "250р/ч"}}
-  - name: "Расчётчик2"       ; short: "Рсч2"  ; type: "T"
-    rates: {A: {std: "40000р/мес",  ot: "250р/ч"}}
-  - name: "Расчётчик3"       ; short: "Рсч3"  ; type: "T"
-    rates: {A: {std: "40000р/мес",  ot: "250р/ч"}}
+  - name: "Техник"
+    short: "Тех"
+    type: "T"
+    rates:
+      A: {std: "40000р/мес",  ot: "250р/ч"}
 
-  - name: "Бухгалтер мат. учёта1" ; short: "Мат1" ; type: "T"
-    rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
-  - name: "Бухгалтер мат. учёта2" ; short: "Мат2" ; type: "T"
-    rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
+  - name: "Расчётчик1" ; short: "Рсч1" ; type: "T" ; rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
+  - name: "Расчётчик2" ; short: "Рсч2" ; type: "T" ; rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
+  - name: "Расчётчик3" ; short: "Рсч3" ; type: "T" ; rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
+
+  - name: "Бухгалтер мат. учёта1" ; short: "Мат1" ; type: "T" ; rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
+  - name: "Бухгалтер мат. учёта2" ; short: "Мат2" ; type: "T" ; rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
 
   - name: "Бухгалтер учёта ОС и НМА" ; short: "ОС-НМА" ; type: "T"
     rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
-  - name: "Бухгалтер учёта ОС"       ; short: "ОС"     ; type: "T"
+
+  - name: "Бухгалтер учёта ОС" ; short: "ОС" ; type: "T"
     rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
 
-  - name: "Бухгалтер учёта реализации"         ; short: "Реал" ; type: "T"
-    rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
-  - name: "Бухгалтер производственного учёта"  ; short: "Произв" ; type: "T"
+  - name: "Бухгалтер учёта реализации" ; short: "Реал" ; type: "T"
     rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
 
-# ────────────────────────  М А Т Е Р И А Л Ы  ───────────────────────────────
-  - {name: "Компьютер",           type: "M", units: "шт",          std_rate: "15000р"}
-  - {name: "Сервер",              type: "M", units: "шт",          std_rate: "50000р"}
-  - {name: "Принтер",             type: "M", units: "шт",          std_rate: "5000р"}
-  - {name: "МФУ",                 type: "M", units: "шт",          std_rate: "7000р"}
-  - {name: "Сетевой кабель",      type: "M", units: "м",           std_rate: "0"}
-  - {name: "Сетевой концентратор",type: "M", units: "шт",          std_rate: "3000р"}
-  - {name: "Панель",              type: "M", units: "шт",          std_rate: "10000р"}
-  - {name: "Разъёмы и розетки",   type: "M", units: "компл",       std_rate: "0"}
-  - {name: "Бухгалтерская система", type: "M", units: "компл",     std_rate: "0"}
-  - {name: "Офисный пакет",       type: "M", units: "компл",       std_rate: "0"}
-  - {name: "ОС рабочей станции",  type: "M", units: "лиц.",        std_rate: "0"}
-  - {name: "Серверная ОС",        type: "M", units: "лиц.",        std_rate: "0"}
-  - {name: "DVD-матрица",         type: "M", units: "шт",          std_rate: "10р"}
+  - name: "Бухгалтер производственного учёта" ; short: "Произв" ; type: "T"
+    rates: {A: {std: "40000р/мес", ot: "250р/ч"}}
 
-# ─────────────────────────  З А Т Р А Т Н Ы Е  ──────────────────────────────
-  - {name: "Интернет",                 type: "Z"}
+  # ─────────────── М А Т Е Р И А Л Ы ────────────────────────────────────────
+  - {name: "Компьютер",           type: "M", units: "шт",      std_rate: "15000р"}
+  - {name: "Сервер",              type: "M", units: "шт",      std_rate: "50000р"}
+  - {name: "Принтер",             type: "M", units: "шт",      std_rate: "5000р"}
+  - {name: "МФУ",                 type: "M", units: "шт",      std_rate: "7000р"}
+  - {name: "Сетевой кабель",      type: "M", units: "м",       std_rate: "0"}
+  - {name: "Сетевой концентратор",type: "M", units: "шт",      std_rate: "3000р"}
+  - {name: "Панель",              type: "M", units: "шт",      std_rate: "10000р"}
+  - {name: "Разъёмы и розетки",   type: "M", units: "компл.",  std_rate: "0"}
+  - {name: "Бухгалтерская система", type: "M", units: "компл.", std_rate: "0"}
+  - {name: "Офисный пакет",       type: "M", units: "компл.",  std_rate: "0"}
+  - {name: "ОС рабочей станции",  type: "M", units: "лиц.",    std_rate: "0"}
+  - {name: "Серверная ОС",        type: "M", units: "лиц.",    std_rate: "0"}
+  - {name: "DVD-матрица",         type: "M", units: "шт",      std_rate: "10р"}
+
+  # ─────────────── З А Т Р А Т Н Ы Е ────────────────────────────────────────
+  - {name: "Интернет",               type: "Z"}
   - {name: "Междугородние переговоры", type: "Z"}
-  - {name: "Оплата курсов",            type: "Z"}
+  - {name: "Оплата курсов",          type: "Z"}
 
 ###############################################################################
-#                            Н А З Н А Ч Е Н И Я                              #
+#                         Н А З Н А Ч Е Н И Я                                 #
 ###############################################################################
+
 assignments:
-# task 3  ──────────────
+  # --- Task-IDs см. проект ЛР-1 ---------------------------------------------
+  # 3  Изучение рынка
   - {task_id: 3,  resource: "Администратор", units: 100, cost_table: "A"}
   - {task_id: 3,  resource: "Интернет",      cost: 1500}
 
-# task 4  ──────────────
+  # 4  Составление требований
   - {task_id: 4,  resource: "Администратор", units: 100, cost_table: "A"}
   - {task_id: 4,  resource: "Главбух",       units: 20,  cost_table: "A"}
 
-# task 5  ──────────────
-  - {task_id: 5,  resource: "Администратор",              units: 100, cost_table: "A"}
-  - {task_id: 5,  resource: "Междугородние переговоры",   cost: 2000}
-  - {task_id: 5,  resource: "Интернет",                   cost: 1000}
+  # 5  Консультации
+  - {task_id: 5, resource: "Администратор", units: 100, cost_table: "A"}
+  - {task_id: 5, resource: "Междугородние переговоры", cost: 2000}
+  - {task_id: 5, resource: "Интернет",      cost: 1000}
 
-# task 6  ──────────────
-  - {task_id: 6,  resource: "Администратор", units: 100}
-  - {task_id: 6,  resource: "Главбух",       units: 100}
+  # 6  Принятие решения
+  - {task_id: 6, resource: "Администратор", units: 100}
+  - {task_id: 6, resource: "Главбух",       units: 100}
 
-# task 9  ──────────────
-  - {task_id: 9,  resource: "Администратор", units: 100}
-  - {task_id: 9,  resource: "Программист",   units: 100}
-  - {task_id: 9,  resource: "Главбух",       units: 100}
+  # 9  Заключение договоров (ПО)
+  - {task_id: 9, resource: "Администратор", units: 100}
+  - {task_id: 9, resource: "Программист",   units: 100}
+  - {task_id: 9, resource: "Главбух",       units: 100}
 
-# task 10 ──────────────
+  # 10  Оплата за ПО
   - {task_id: 10, resource: "Главбух",               units: 10}
   - {task_id: 10, resource: "Бухгалтерская система", quantity: 1}
   - {task_id: 10, resource: "Офисный пакет",         quantity: 1}
   - {task_id: 10, resource: "ОС рабочей станции",    quantity: 1}
   - {task_id: 10, resource: "Серверная ОС",          quantity: 1}
 
-# task 11 ──────────────
+  # 11  Оформление ПО
   - {task_id: 11, resource: "Бухгалтер учёта ОС и НМА", units: 30}
 
-# task 14 ──────────────
+  # 14  Архитектура сети
   - {task_id: 14, resource: "Администратор", units: 100}
   - {task_id: 14, resource: "Программист",   units: 100}
   - {task_id: 14, resource: "Техник",        units: 50}
 
-# task 15 ──────────────
+  # 15  Физ. размещение сети
   - {task_id: 15, resource: "Администратор", units: 100}
   - {task_id: 15, resource: "Программист",   units: 100}
   - {task_id: 15, resource: "Техник",        units: 100}
 
-# task 18 ──────────────
+  # 18  Сбор информации о поставщиках
   - {task_id: 18, resource: "Администратор",            units: 50}
   - {task_id: 18, resource: "Интернет",                 cost: 1000}
   - {task_id: 18, resource: "Междугородние переговоры", cost: 1500}
 
-# task 19 ──────────────
+  # 19  Анализ и выбор поставщика
   - {task_id: 19, resource: "Администратор", units: 50}
   - {task_id: 19, resource: "Главбух",       units: 20}
   - {task_id: 19, resource: "Интернет",      cost: 1000}
 
-# task 20 ──────────────
+  # 20  Заключение договоров (оборудование)
   - {task_id: 20, resource: "Администратор", units: 100}
   - {task_id: 20, resource: "Главбух",       units: 50}
 
-# task 21 ──────────────
-  - {task_id: 21, resource: "Главбух",        units: 30}
-  - {task_id: 21, resource: "Компьютер",      quantity: 12}
-  - {task_id: 21, resource: "Сервер",         quantity: 1}
-  - {task_id: 21, resource: "Принтер",        quantity: 2}
-  - {task_id: 21, resource: "МФУ",            quantity: 2}
-  - {task_id: 21, resource: "Сетевой кабель", quantity: 2}
-  - {task_id: 21, resource: "Сетевой концентратор", quantity: 2}
-  - {task_id: 21, resource: "Панель",              quantity: 2}
-  - {task_id: 21, resource: "Разъёмы и розетки",   quantity: 2}
+  # 21  Оплата за оборудование
+  - {task_id: 21, resource: "Главбух",               units: 30}
+  - {task_id: 21, resource: "Компьютер",             quantity: 12}
+  - {task_id: 21, resource: "Сервер",                quantity: 1}
+  - {task_id: 21, resource: "Принтер",               quantity: 2}
+  - {task_id: 21, resource: "МФУ",                   quantity: 2}
+  - {task_id: 21, resource: "Сетевой кабель",        quantity: 2}
+  - {task_id: 21, resource: "Сетевой концентратор",  quantity: 2}
+  - {task_id: 21, resource: "Панель",                quantity: 2}
+  - {task_id: 21, resource: "Разъёмы и розетки",     quantity: 2}
 
-# task 22 ──────────────
+  # 22  Оформление оборудования
   - {task_id: 22, resource: "Бухгалтер учёта ОС", units: 70}
 
-# task 25 ──────────────
+  # 25  Курсы администраторов
   - {task_id: 25, resource: "Администратор", units: 100}
   - {task_id: 25, resource: "Оплата курсов",  cost: 25000}
 
-# task 26 ──────────────
-  - {task_id: 26, resource: "Программист",  units: 100}
+  # 26  Курсы программистов
+  - {task_id: 26, resource: "Программист", units: 100}
   - {task_id: 26, resource: "Оплата курсов", cost: 20000}
 
-# task 27 ──────────────
+  # 27  Сертиф. экзамены
   - {task_id: 27, resource: "Администратор", units: 100}
   - {task_id: 27, resource: "Программист",   units: 100}
 
-# task 30–33 (Техник) ──
+  # 30-33  Монтаж / установка – Техник
   - {task_id: 30, resource: "Техник", units: 100}
   - {task_id: 31, resource: "Техник", units: 100}
   - {task_id: 32, resource: "Техник", units: 100}
   - {task_id: 33, resource: "Техник", units: 100}
 
-# task 36–38 (сеть) ────
+  # 36-38  Настройка сети
   - {task_id: 36, resource: "Администратор", units: 100}
   - {task_id: 37, resource: "Администратор", units: 100}
   - {task_id: 38, resource: "Администратор", units: 100}
   - {task_id: 38, resource: "Программист",   units: 100}
 
-# task 41 ──────────────
-  - {task_id: 41, resource: "Администратор", units: 100, cost_table: "B"}
-  - {task_id: 41, resource: "Программист",   units: 100, cost_table: "B"}
-  - {task_id: 41, resource: "Расчётчик1", units: 30}
-  - {task_id: 41, resource: "Расчётчик2", units: 30}
-  - {task_id: 41, resource: "Расчётчик3", units: 30}
+  # 41  Ввод справочников (табл. норм B для Адм/Прог)
+  - {task_id: 41, resource: "Администратор",  units: 100, cost_table: "B"}
+  - {task_id: 41, resource: "Программист",    units: 100, cost_table: "B"}
+  - {task_id: 41, resource: "Расчётчик1",     units: 30}
+  - {task_id: 41, resource: "Расчётчик2",     units: 30}
+  - {task_id: 41, resource: "Расчётчик3",     units: 30}
   - {task_id: 41, resource: "Бухгалтер мат. учёта1", units: 50}
   - {task_id: 41, resource: "Бухгалтер мат. учёта2", units: 50}
   - {task_id: 41, resource: "Бухгалтер учёта ОС и НМА", units: 50}
@@ -176,54 +190,74 @@ assignments:
   - {task_id: 41, resource: "Бухгалтер производственного учёта", units: 50}
   - {task_id: 41, resource: "DVD-матрица", quantity: 10}
 
-# task 42 ──────────────
+  # 42  Ввод остатков
   - {task_id: 42, resource: "Администратор", units: 100, cost_table: "B"}
   - {task_id: 42, resource: "Программист",   units: 100, cost_table: "B"}
   - {task_id: 42, resource: "Главбух",       units: 50}
   - {task_id: 42, resource: "DVD-матрица",   quantity: 10}
 
-# task 45 (Принципы)  ──
-{% for res in ["Администратор","Главбух","Расчётчик1","Расчётчик2","Расчётчик3",
-               "Бухгалтер мат. учёта1","Бухгалтер мат. учёта2",
-               "Бухгалтер учёта ОС и НМА","Бухгалтер учёта ОС",
-               "Бухгалтер учёта реализации","Бухгалтер производственного учёта"] %}
-  - {task_id: 45, resource: "{{res}}", units: 50}
-{% endfor %}
+  # 45  Принципы работы системы (50 %)
+  - {task_id: 45, resource: "Администратор", units: 50}
+  - {task_id: 45, resource: "Главбух",       units: 50}
+  - {task_id: 45, resource: "Расчётчик1",    units: 50}
+  - {task_id: 45, resource: "Расчётчик2",    units: 50}
+  - {task_id: 45, resource: "Расчётчик3",    units: 50}
+  - {task_id: 45, resource: "Бухгалтер мат. учёта1", units: 50}
+  - {task_id: 45, resource: "Бухгалтер мат. учёта2", units: 50}
+  - {task_id: 45, resource: "Бухгалтер учёта ОС и НМА", units: 50}
+  - {task_id: 45, resource: "Бухгалтер учёта ОС", units: 50}
+  - {task_id: 45, resource: "Бухгалтер учёта реализации", units: 50}
+  - {task_id: 45, resource: "Бухгалтер производственного учёта", units: 50}
 
-# task 46 (Интерфейс)  ─
-{% for res in ["Программист","Главбух","Расчётчик1","Расчётчик2","Расчётчик3",
-               "Бухгалтер мат. учёта1","Бухгалтер мат. учёта2",
-               "Бухгалтер учёта ОС и НМА","Бухгалтер учёта ОС",
-               "Бухгалтер учёта реализации","Бухгалтер производственного учёта"] %}
-  - {task_id: 46, resource: "{{res}}", units: 50}
-{% endfor %}
+  # 46  Изучение интерфейса (50 %)
+  - {task_id: 46, resource: "Программист",   units: 50}
+  - {task_id: 46, resource: "Главбух",       units: 50}
+  - {task_id: 46, resource: "Расчётчик1",    units: 50}
+  - {task_id: 46, resource: "Расчётчик2",    units: 50}
+  - {task_id: 46, resource: "Расчётчик3",    units: 50}
+  - {task_id: 46, resource: "Бухгалтер мат. учёта1", units: 50}
+  - {task_id: 46, resource: "Бухгалтер мат. учёта2", units: 50}
+  - {task_id: 46, resource: "Бухгалтер учёта ОС и НМА", units: 50}
+  - {task_id: 46, resource: "Бухгалтер учёта ОС", units: 50}
+  - {task_id: 46, resource: "Бухгалтер учёта реализации", units: 50}
+  - {task_id: 46, resource: "Бухгалтер производственного учёта", units: 50}
 
-# task 47 (Справочники) ─
-{% for res in ["Программист","Главбух","Расчётчик1","Расчётчик2","Расчётчик3",
-               "Бухгалтер мат. учёта1","Бухгалтер мат. учёта2",
-               "Бухгалтер учёта ОС и НМА","Бухгалтер учёта ОС",
-               "Бухгалтер учёта реализации","Бухгалтер производственного учёта"] %}
-  - {task_id: 47, resource: "{{res}}", units: 50}
-{% endfor %}
+  # 47  Изучение справочников (50 %)
+  - {task_id: 47, resource: "Программист",   units: 50}
+  - {task_id: 47, resource: "Главбух",       units: 50}
+  - {task_id: 47, resource: "Расчётчик1",    units: 50}
+  - {task_id: 47, resource: "Расчётчик2",    units: 50}
+  - {task_id: 47, resource: "Расчётчик3",    units: 50}
+  - {task_id: 47, resource: "Бухгалтер мат. учёта1", units: 50}
+  - {task_id: 47, resource: "Бухгалтер мат. учёта2", units: 50}
+  - {task_id: 47, resource: "Бухгалтер учёта ОС и НМА", units: 50}
+  - {task_id: 47, resource: "Бухгалтер учёта ОС", units: 50}
+  - {task_id: 47, resource: "Бухгалтер учёта реализации", units: 50}
+  - {task_id: 47, resource: "Бухгалтер производственного учёта", units: 50}
 
-# task 48 (Док-журналы) ─
-{% for res in ["Программист","Главбух","Расчётчик1","Расчётчик2","Расчётчик3",
-               "Бухгалтер мат. учёта1","Бухгалтер мат. учёта2",
-               "Бухгалтер учёта ОС и НМА","Бухгалтер учёта ОС",
-               "Бухгалтер учёта реализации","Бухгалтер производственного учёта"] %}
-  - {task_id: 48, resource: "{{res}}", units: 50}
-{% endfor %}
+  # 48  Изучение документов и журналов (50 %)
+  - {task_id: 48, resource: "Программист",   units: 50}
+  - {task_id: 48, resource: "Главбух",       units: 50}
+  - {task_id: 48, resource: "Расчётчик1",    units: 50}
+  - {task_id: 48, resource: "Расчётчик2",    units: 50}
+  - {task_id: 48, resource: "Расчётчик3",    units: 50}
+  - {task_id: 48, resource: "Бухгалтер мат. учёта1", units: 50}
+  - {task_id: 48, resource: "Бухгалтер мат. учёта2", units: 50}
+  - {task_id: 48, resource: "Бухгалтер учёта ОС и НМА", units: 50}
+  - {task_id: 48, resource: "Бухгалтер учёта ОС", units: 50}
+  - {task_id: 48, resource: "Бухгалтер учёта реализации", units: 50}
+  - {task_id: 48, resource: "Бухгалтер производственного учёта", units: 50}
   - {task_id: 48, resource: "DVD-матрица", quantity: 10}
 
-# task 51 ──────────────
+  # 51  Формирование тестовой отчётности
   - {task_id: 51, resource: "Администратор", units: 100}
   - {task_id: 51, resource: "Программист",   units: 100}
   - {task_id: 51, resource: "Главбух",       units: 100}
 
-# task 52 ──────────────
+  # 52  Акт ввода в эксплуатацию
   - {task_id: 52, resource: "Администратор", units: 50}
   - {task_id: 52, resource: "Главбух",       units: 50}
 
 ###############################################################################
-#  Конец файла                                                                
+#                        К О Н Е Ц   F I L E                                   #
 ###############################################################################
