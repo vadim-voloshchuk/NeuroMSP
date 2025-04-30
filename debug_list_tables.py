@@ -1,47 +1,55 @@
 #!/usr/bin/env python
 # coding: utf-8
 """
-debug_list_tables.py — вывести все таблицы (Application.Tables()) в текущем MPP
-Usage:  python debug_list_tables.py "C:\\path\\to\\file.mpp"
+debug_list_tables.py  —  показать списки таблиц MS Project
+Usage:  python debug_list_tables.py  "C:\\path\\file.mpp"
 """
-import sys, time
+import sys, time, itertools
 from pathlib import Path
-from win32com.client import Dispatch
+from win32com.client import Dispatch, constants as pj
+import pywintypes                         # для обработки com_error
+
+CATS = {0: "(Task)", 1: "(Res)", 2: "(Asn)"}
+
+def enum_tables(app):
+    """генератор (name, category) для всех таблиц"""
+    # 0 — Task, 1 — Resource, 2 — Assignment
+    getters = (
+        (0, app.TableList),           # задачи
+        (1, app.ResourceTableList),   # ресурсы
+        (2, app.AssignmentTableList), # назначения
+    )
+    for cat, fn in getters:
+        for idx in itertools.count(1, 1):
+            try:
+                name = fn(idx)        # ← string
+            except pywintypes.com_error:
+                break                 # элементов больше нет
+            yield name, cat
 
 def main():
     if len(sys.argv) < 2:
         print("Usage: python debug_list_tables.py <file.mpp>"); return
-
-    mpp = Path(sys.argv[1]).absolute()
+    mpp = Path(sys.argv[1]).expanduser().resolve()
     print("Opening:", mpp)
-    if not mpp.exists():
-        print("❌ файл не найден"); return
+    if not mpp.exists(): print("❌ файл не найден"); return
 
-    app = Dispatch("MSProject.Application")
-    app.Visible = True
-    time.sleep(0.5)
+    app = Dispatch("MSProject.Application"); app.Visible = True
+    time.sleep(0.4)
 
     try:
         app.FileOpen(Name=str(mpp))
     except Exception as e:
         print("❌ FileOpen:", e); return
 
-    # ► ключевая разница ↓↓↓
-    try:
-        tables = app.Tables()          # вызываем метод → получаем коллекцию
-    except Exception as e:
-        print("❌ Application.Tables():", e); return
+    tables = list(enum_tables(app))
+    print(f"=== Всего таблиц: {len(tables)} ===")
+    for i, (nm, cat) in enumerate(tables, 1):
+        print(f"{i:2d}. {nm:<30s} {CATS[cat]}")
 
-    print(f"=== Всего таблиц: {tables.Count} ===")
-    for i in range(1, tables.Count + 1):
-        tbl = tables.Item(i)
-        # tbl.Category: 0-Task, 1-Resource, 2-Assignment
-        kind = {0:"(Task)",1:"(Res)",2:"(Asn)"}[tbl.Category]
-        print(f"{i:2d}. {tbl.Name:<30s} {kind}")
-
-    # очистка
+    # закроем файл/Project для чистоты
     time.sleep(1)
-    try: app.FileClose()
+    try: app.FileClose(pj.pjDoNotSave)
     except: pass
     try: app.Quit()
     except: pass
