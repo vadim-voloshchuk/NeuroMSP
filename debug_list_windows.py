@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 """
-debug_list_tables.py — вывести все таблицы Application.Tables
-Usage: python debug_list_tables.py "C:\path\to\file.mpp"
+debug_list_windows.py — вывести все окна MS Project, доступные через Application.Windows
+Usage: python debug_list_windows.py "C:\path\to\file.mpp"
 """
 import sys, time
 from pathlib import Path
@@ -10,7 +10,7 @@ from win32com.client import Dispatch
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python debug_list_tables.py \"C:\\path\\to\\file.mpp\"")
+        print("Usage: python debug_list_windows.py \"C:\\path\\to\\file.mpp\"")
         return
 
     proj_path = Path(sys.argv[1]).absolute()
@@ -28,17 +28,16 @@ def main():
         print("❌ Ошибка FileOpen:", e)
         return
 
-    # Получаем таблицы у Application, а не у ActiveProject
     try:
-        tables = app.Tables
+        wins = app.Windows
     except Exception as e:
-        print("❌ Не удалось получить Application.Tables:", e)
+        print("❌ Не удалось получить Application.Windows:", e)
         return
 
-    print(f"=== Всего таблиц: {tables.Count} ===")
-    for i in range(1, tables.Count + 1):
-        tbl = tables.Item(i)
-        print(f"{i:2d}. {tbl.Name}")
+    print(f"=== Всего окон: {wins.Count} ===")
+    for i in range(1, wins.Count + 1):
+        w = wins.Item(i)
+        print(f"{i:2d}. {w.Caption}")
 
     # cleanup
     time.sleep(1)
