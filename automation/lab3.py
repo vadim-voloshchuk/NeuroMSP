@@ -80,19 +80,23 @@ def task_by_id(app, tid):
 def add_asn(task, res):
     """
     Создаёт назначение, если такого ещё нет.
-    Логгер вместо Exception – скрипт живёт дальше.
+    Возвращает Assignment | None.
     """
     for a in task.Assignments:
         if a and a.ResourceID == res.ID:
-            return None          # уже есть
+            return None                      # дубликат
 
     pj = task.Application.ActiveProject
-    for _ in range(3):           # пару попыток – если Project «думает»
+    last_err = None                          # <─- фикс
+    for _ in range(3):
         try:
             return pj.Assignments.Add(task.UniqueID, res.UniqueID)
-        except Exception as e:
+        except Exception as err:
+            last_err = err
             time.sleep(0.7)
-    logging.info("Skip assign %s→%s – %s", task.ID, res.Name, e)
+
+    # если дошли сюда – 3 попытки не удались
+    logging.info("Skip assign %s→%s – %s", task.ID, res.Name, last_err)
     return None
 
 # ─── шаг-1: ресурсы -------------------------------------------------------
